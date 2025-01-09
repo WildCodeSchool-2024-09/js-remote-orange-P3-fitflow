@@ -10,6 +10,7 @@ import "./index.css";
 import App from "./App";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 // Import additional components for new routes
 // Try creating these components in the "pages" folder
 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />
   }
   // Try adding a new route! For example, "/about" with an About component
 ]);

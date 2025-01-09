@@ -1,11 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import Google from "@/components/icons/Google";
 import Facebook from "@/components/icons/Facebook";
 import Apple from "@/components/icons/Apple";
+import ErrorWarning from "@/components/icons/ErrorWarning";
 import {
     Form,
     FormControl,
@@ -24,7 +28,14 @@ const loginSchema = z.object({
         .regex(/[^a-zA-Z0-9]/, { message: "Le mot de passe doit contenir au moins un caractère spécial" }),
 });
 
+type ServerError = {
+    field: string;
+    message: string;
+};
+
 function LoginForm() {
+    const [serverErrors, setServerErrors] = useState<ServerError[]>([]);
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -33,9 +44,28 @@ function LoginForm() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof loginSchema>) => {
-        console.log(values);
-        // TODO: Ajouter la logique de la connexion de l'utilisateur
+    const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+        setServerErrors([]);
+        const response = await fetch("http://localhost:3310/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(values),
+        });
+        const data = await response.json();
+        if (data.errors) {
+            setServerErrors(data.errors);
+            return;
+        }
+        if (data.success) {
+            navigate(data.redirectUrl);
+            // TODO: Ajouter la logique de la connexion de l'utilisateur
+        } else {
+            console.log(data);
+        }
     }
 
     return (
@@ -76,6 +106,17 @@ function LoginForm() {
                         </FormItem>
                     )}
                 />
+                {serverErrors.length > 0 && (
+                    <Alert variant="destructive">
+                        <ErrorWarning />
+                        <AlertTitle>Erreur</AlertTitle>
+                        <AlertDescription>
+                            {serverErrors.map((error, index) => (
+                                <p key={index}>{error.message}</p>
+                            ))}
+                        </AlertDescription>
+                    </Alert>
+                )}
                 <Button
                     type="submit"
                     className="w-full mt-4">

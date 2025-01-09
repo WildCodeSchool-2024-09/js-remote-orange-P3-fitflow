@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function Signup() {
     const navigate = useNavigate();
+
     return (
         <main className="flex flex-col items-center justify-between h-screen">
             <header className="flex flex-col items-center justify-center w-full border-b border-gray-100 md:mb-10">
