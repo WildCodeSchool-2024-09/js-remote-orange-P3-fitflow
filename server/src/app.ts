@@ -1,71 +1,32 @@
-// Load the express module to create a web application
-
 import express from "express";
+import cors from "cors";
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
-// Configure it
-
-/* ************************************************************************* */
-
-// CORS Handling: Why is the current code present and do I need to define specific allowed origins for my project?
-
-// CORS (Cross-Origin Resource Sharing) is a security mechanism in web browsers that blocks requests from a different domain than the server.
-// You may find the following magic line in forums:
-
-// app.use(cors());
-
-// You should NOT do that: such code uses the `cors` module to allow all origins, which can pose security issues.
-// For this pedagogical template, the CORS code allows CLIENT_URL in development mode (when process.env.CLIENT_URL is defined).
-
-import cors from "cors";
-
+// Configuration CORS
 if (process.env.CLIENT_URL != null) {
-  app.use(cors({ origin: [process.env.CLIENT_URL] }));
+    app.use(cors({ 
+        origin: process.env.CLIENT_URL,
+        credentials: true
+    }));
+} else {
+    app.use(cors({
+        origin: "http://localhost:5173", // Ajoutez explicitement l'origine en développement
+        credentials: true
+    }));
 }
 
-// If you need to allow extra origins, you can add something like this:
-
-/*
-app.use(
-  cors({
-    origin: ["http://mysite.com", "http://another-domain.com"],
-  }),
-);
-*/
-
-// With ["http://mysite.com", "http://another-domain.com"]
-// to be replaced with an array of your trusted origins
-
-/* ************************************************************************* */
-
-// Request Parsing: Understanding the purpose of this part
-
-// Request parsing is necessary to extract data sent by the client in an HTTP request.
-// For example to access the body of a POST request.
-// The current code contains different parsing options as comments to demonstrate different ways of extracting data.
-
-// 1. `express.json()`: Parses requests with JSON data.
-// 2. `express.urlencoded()`: Parses requests with URL-encoded data.
-// 3. `express.text()`: Parses requests with raw text data.
-// 4. `express.raw()`: Parses requests with raw binary data.
-
-// Uncomment one or more of these options depending on the format of the data sent by your client:
-
-// app.use(express.json());
-// app.use(express.urlencoded());
-// app.use(express.text());
-// app.use(express.raw());
-
-/* ************************************************************************* */
+// Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Import the API router
 import router from "./router";
 
 // Mount the API router under the "/api" endpoint
 app.use(router);
-
-/* ************************************************************************* */
 
 // Production-ready setup: What is it for?
 
@@ -100,8 +61,6 @@ if (fs.existsSync(clientBuildPath)) {
   });
 }
 
-/* ************************************************************************* */
-
 // Middleware for Error Logging
 // Important: Error-handling middleware should be defined last, after other app.use() and routes calls.
 
@@ -119,7 +78,5 @@ const logErrors: ErrorRequestHandler = (err, req, res, next) => {
 
 // Mount the logErrors middleware globally
 app.use(logErrors);
-
-/* ************************************************************************* */
 
 export default app;
