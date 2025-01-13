@@ -18,6 +18,7 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
     email: z.string().email({ message: "Adresse email invalide" }),
@@ -35,6 +36,7 @@ type ServerError = {
 
 function LoginForm() {
     const [serverErrors, setServerErrors] = useState<ServerError[]>([]);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -64,7 +66,7 @@ function LoginForm() {
             navigate(data.redirectUrl);
             // TODO: Ajouter la logique de la connexion de l'utilisateur
         } else {
-            console.log(data);
+            console.info(data);
         }
     }
 
@@ -97,10 +99,23 @@ function LoginForm() {
                         <FormItem>
                             <FormLabel>Mot de passe</FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder="Mot de passe"
-                                    {...field} />
+                                <div className="relative">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Mot de passe"
+                                        {...field} />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                                    >
+                                        {showPassword ? (
+                                            <Eye className="h-4 w-4 text-gray-500" />
+                                        ) : (
+                                            <EyeOff className="h-4 w-4 text-gray-500" />
+                                        )}
+                                    </button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -120,7 +135,7 @@ function LoginForm() {
                 <Button
                     type="submit"
                     className="w-full mt-4">
-                    Connexion
+                    Se connecter
                 </Button>
                 <Button
                     variant="outline"

@@ -4,6 +4,9 @@ const router = express.Router();
 
 // Import cookie-related modules
 import cookieJwtAuth from "./modules/cookie/cookieJwtAuth";
+import coachActions from "./modules/coach/coachActions";
+
+/* router.get("/app/dashboard", getCoach); */
 
 
 /* ************************************************************************* */
@@ -20,6 +23,7 @@ router.post(
 // Define login routes
 
 import loginActions from "./modules/login/loginActions";
+import logoutActions from "./modules/logout/logoutActions";
 router.post(
     "/login",
     loginActions.checkUser,
@@ -29,27 +33,15 @@ router.post(
 /* ************************************************************************* */
 // Define dashboard routes
 
-router.post(
-    "/dashboard", 
-    cookieJwtAuth.cookieJwtAuth,
-    (req, res) => {
-        // Vérifier si l'utilisateur est authentifié
-        if (req.user) {
-            // Envoyer les données de l'utilisateur
-            res.clearCookie("token");
-            res.status(200).json({
-                message: "Accès autorisé au dashboard",
-                user: req.user
-            });
-        } else {
-            // Si pas d'utilisateur, renvoyer une erreur
-            res.status(401).json({ 
-                message: "Non autorisé" 
-            });
-        }
-    }
-)
+router.route("/app/dashboard")
+    .get(
+        cookieJwtAuth.cookieJwtAuth,
+        coachActions.getCoach
+    )
+    .post(logoutActions.logout);
 
-/* router.get("/api/login", () => console.log("login")); */
+/* ************************************************************************* */
+// Define plans routes
+
 
 export default router;

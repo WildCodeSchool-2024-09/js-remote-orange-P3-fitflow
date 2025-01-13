@@ -1,6 +1,5 @@
 import type { RequestHandler } from "express";
-import databaseClient from "../../../database/client";
-import type { Result, Rows } from "../../../database/client";
+import databaseClient, { Rows } from "../../../database/client";
 import type { RowDataPacket } from 'mysql2';
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -55,7 +54,10 @@ const login: RequestHandler = async (req, res, next) => {
     try {
         await checkUser(req, res, next);
         if (req.user) {
-            const token = jwt.sign({ user: req.user }, JWT_SECRET, { expiresIn: "12h" });
+
+            const token = jwt.sign({ user: req.user }, JWT_SECRET, { expiresIn: "8h" });
+            
+
             res.status(200)
             .cookie("token", token, { httpOnly: true })
             .json({ 
@@ -65,7 +67,7 @@ const login: RequestHandler = async (req, res, next) => {
                     email: req.user.email,
                     user_role: req.user.user_role,
                 },
-                redirectUrl: "/dashboard"
+                redirectUrl: "/app/dashboard"
             });
         } else {
             res.status(401).json({ message: "Authentification échouée" });
