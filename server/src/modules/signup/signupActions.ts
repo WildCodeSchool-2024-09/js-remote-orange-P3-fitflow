@@ -94,7 +94,7 @@ const add: RequestHandler = async (req, res, next) => {
         const token = jwt.sign({ 
             user: { ...newUser, id: insertId }
         }, JWT_SECRET, {
-            expiresIn: "12h",
+            expiresIn: "8h",
         });
 
         res.status(201)
@@ -108,7 +108,7 @@ const add: RequestHandler = async (req, res, next) => {
                     first_name: req.body.first_name,
                     last_name: req.body.last_name
                 },
-                redirectUrl: "/dashboard"
+                redirectUrl: "/app/dashboard"
             });
 
     } catch (err) {

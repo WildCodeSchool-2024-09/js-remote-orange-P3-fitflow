@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import SignupForm from "@/components/SignupForm";
+import SignupForm from "@/components/forms/SignupForm";
 import { useNavigate } from "react-router-dom";
 
 function Signup() {

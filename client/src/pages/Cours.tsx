@@ -2,14 +2,14 @@ import AppSidebar from "../components/sidebar/AppSidebar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { SidebarInset, SidebarProvider } from "../components/ui/sidebar";
 import { useEffect } from "react";
-import { UserProvider, useUser } from "../context/UserContext";
-function DashboardContent() {
+import { UserProvider, useUser } from "@/context/UserContext";
+
+function CoursContent() {
     const { coach, fetchCoach } = useUser();
 
     useEffect(() => {
         fetchCoach();
     }, []);
-
     return (
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
@@ -18,11 +18,10 @@ function DashboardContent() {
                     <header className="flex items-center justify-between w-full p-4 border-b border-gray-200">
                         <div className="flex items-center justify-start gap-2">
                             <SidebarTrigger />
-                            <h1 className="text-sm font-medium">Dashboard</h1>
+                            <h1 className="text-sm font-medium">Cours</h1>
                         </div>
                         <p>{coach?.email}</p>
                         <p>{coach?.first_name}</p>
-                        <p>{coach?.id}</p>
                     </header>
                 </SidebarInset>
             </SidebarProvider>
@@ -30,10 +29,10 @@ function DashboardContent() {
     );
 }
 
-export default function Dashboard() {
+export default function Cours() {
     return (
         <UserProvider>
-            <DashboardContent />
+            <CoursContent />
         </UserProvider>
     );
 }

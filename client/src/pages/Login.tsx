@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/forms/LoginForm";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ function Login() {
                     <CardHeader className="flex flex-col items-center justify-center gap-2">
                         <CardTitle
                             className="text-center">
-                            Connextez-vous
+                            Connectez-vous
                         </CardTitle>
                         <CardDescription
                             className="text-center">

@@ -1,13 +1,8 @@
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Input } from "@/components/ui/input";
+import Apple from "@/components/icons/Apple";
+import Facebook from "@/components/icons/Facebook";
+import Google from "@/components/icons/Google";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import Google from "@/components/icons/Google";
-import Facebook from "@/components/icons/Facebook";
-import Apple from "@/components/icons/Apple";
 import {
     Form,
     FormControl,
@@ -16,7 +11,13 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
 const signupSchema = z.object({
     lastName: z.string().min(2, { message: "Votre nom doit contenir au moins 2 caractères" }),
@@ -47,6 +48,7 @@ function SignupForm() {
             password: "",
         },
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     const onSubmit = async (values: z.infer<typeof signupSchema>) => {
         setServerErrors([]);
@@ -156,10 +158,25 @@ function SignupForm() {
                                 Mot de passe
                             </FormLabel>
                             <FormControl>
-                                <Input
-                                    type="password"
-                                    placeholder="Mot de passe"
-                                    {...field} />
+                                <div className="relative">
+                                    <Input
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="Mot de passe"
+                                        {...field}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                                    >
+                                        {showPassword ? (
+
+                                            <Eye className="h-4 w-4 text-gray-500" />
+                                        ) : (
+                                            <EyeOff className="h-4 w-4 text-gray-500" />
+                                        )}
+                                    </button>
+                                </div>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
