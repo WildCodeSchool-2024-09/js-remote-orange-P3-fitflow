@@ -6,8 +6,6 @@ const router = express.Router();
 import cookieJwtAuth from "./modules/cookie/cookieJwtAuth";
 import coachActions from "./modules/coach/coachActions";
 
-/* router.get("/app/dashboard", getCoach); */
-
 
 /* ************************************************************************* */
 // Define signup routes
@@ -43,5 +41,16 @@ router.route("/app/dashboard")
 /* ************************************************************************* */
 // Define plans routes
 
+import planActions from "./modules/plans/planActions";
+import planSubscriptionActions from "./modules/plan_subscription/planSubscriptionActions";
+router.get("/app/plans", 
+    cookieJwtAuth.cookieJwtAuth,
+    planActions.browse,
+);
+
+router.put("/app/plans", 
+    cookieJwtAuth.cookieJwtAuth,
+    planSubscriptionActions.edit
+);
 
 export default router;

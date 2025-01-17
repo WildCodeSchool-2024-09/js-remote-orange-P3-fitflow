@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type User = {
@@ -32,7 +32,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const [coach, setCoach] = useState<Coach | null>(null);
     const navigate = useNavigate();
 
-    const fetchCoach = async () => {
+    const fetchCoach = useCallback(async () => {
         try {
             const response = await fetch("http://localhost:3310/app/dashboard", {
                 method: "GET",
@@ -54,7 +54,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             console.error("Erreur lors de la récupération des données:", error);
             navigate("/login");
         }
-    };
+    }, [navigate]);
 
     const handleSetUser = async (newUser: User | null) => {
         if (newUser === null) {
