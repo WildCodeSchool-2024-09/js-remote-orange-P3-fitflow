@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 
 import signupRepository from "./signupRepository";
+import planSubscriptionRepository from "../plan_subscription/planSubscriptionRepository";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -16,6 +17,15 @@ type Coach = {
   plan_id: number;
   first_name: string;
   last_name: string;
+};
+
+type PlanSubscription = {
+  plan_id: number;
+  coach_id: number;
+  subscription_start_date: Date;
+  subscription_end_date: Date;
+  subscription_status: string;
+  type_of_subscription: string;
 };
 
 const validate: RequestHandler = async (req, res, next) => {
@@ -89,7 +99,18 @@ const add: RequestHandler = async (req, res, next) => {
             last_name: req.body.last_name,
         };
 
-        await signupRepository.createCoach(newCoach);
+        const coachId = await signupRepository.createCoach(newCoach);
+
+        const newPlanSubscription: PlanSubscription = {
+            plan_id: 1,
+            coach_id: coachId,
+            subscription_start_date: new Date(),
+            subscription_end_date: new Date(new Date().setDate(new Date().getDate() + 14)),
+            subscription_status: "active",
+            type_of_subscription: "monthly",
+        }
+
+        await planSubscriptionRepository.create(newPlanSubscription);
 
         const token = jwt.sign({ 
             user: { ...newUser, id: insertId }
