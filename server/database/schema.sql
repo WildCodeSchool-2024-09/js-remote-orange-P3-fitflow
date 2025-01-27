@@ -23,7 +23,7 @@ CREATE TABLE coaches (
   plan_id INT UNSIGNED NOT NULL,
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
-  phone INT UNSIGNED NULL,
+  phone_number VARCHAR(20) NULL,
   profile_picture VARCHAR(255) NULL,
   speciality VARCHAR(255) NULL,
   bio TEXT NULL,

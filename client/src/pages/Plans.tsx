@@ -20,7 +20,7 @@ function PlansContent() {
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
                 <AppSidebar />
-                <SidebarInset className="flex flex-col items-start justify-start pb-10">
+                <SidebarInset className="flex flex-col items-start justify-start pb-10 h-screen">
                     <header className="flex items-center justify-between w-full p-4 border-b border-gray-200">
                         <div className="flex items-center justify-start gap-2 h-full">
                             <SidebarTrigger />

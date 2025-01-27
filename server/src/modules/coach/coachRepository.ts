@@ -33,6 +33,23 @@ class CoachRepository {
         );
         return result[0];
     }
+
+    async update(coach: any) {
+        const [result] = await databaseClient.query<Result>(
+            "UPDATE coaches SET user_id = ?, last_name = ?, first_name = ?, phone_number = ?, profile_picture = ?, speciality = ?, bio = ? WHERE id = ?",
+            [
+                coach.user_id,
+                coach.last_name,
+                coach.first_name,
+                coach.phone_number,
+                coach.profile_picture,
+                coach.speciality,
+                coach.bio,
+                coach.id
+            ],
+        );
+        return result.affectedRows;
+    }
 }
 
 export default new CoachRepository();

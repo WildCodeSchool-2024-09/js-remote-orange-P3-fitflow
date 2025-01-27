@@ -5,7 +5,7 @@ const router = express.Router();
 // Import cookie-related modules
 import cookieJwtAuth from "./modules/cookie/cookieJwtAuth";
 import coachActions from "./modules/coach/coachActions";
-
+import { fileUpload } from "./modules/multer/multer";
 
 /* ************************************************************************* */
 // Define signup routes
@@ -51,6 +51,15 @@ router.get("/app/plans",
 router.put("/app/plans", 
     cookieJwtAuth.cookieJwtAuth,
     planSubscriptionActions.edit
+);
+
+/* ************************************************************************* */
+// Define profil routes
+router.put("/app/profil", 
+    cookieJwtAuth.cookieJwtAuth,
+    fileUpload,
+    coachActions.validateCoachData,
+    coachActions.updateCoach
 );
 
 export default router;

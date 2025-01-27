@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+const multer = require('multer');
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -21,6 +22,7 @@ if (process.env.CLIENT_URL != null) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use('/imageUpload', express.static(path.join(__dirname, '../../public/imageUpload')));
 
 // Import the API router
 import router from "./router";

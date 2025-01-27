@@ -14,7 +14,9 @@ type Coach = {
     last_name: string;
     email: string;
     phone: string;
-    address: string;
+    profile_picture: string;
+    bio: string;
+    speciality: string;
     // Ajoutez d'autres propriétés du coach selon vos besoins
 }
 
@@ -49,6 +51,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
             if (data.coach) {
                 setCoach(data.coach);
+                console.log(data.coach);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des données:", error);

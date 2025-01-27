@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "@/components/ui/separator";
+import ProfileContent from "@/components/profile/ProfileContent";
 
 function ProfilContent() {
     const { fetchCoach } = useUser();
@@ -27,6 +28,7 @@ function ProfilContent() {
                             <h1 className="text-sm font-medium">Profil</h1>
                         </div>
                     </header>
+                    <ProfileContent />
                 </SidebarInset>
             </SidebarProvider>
         </main>

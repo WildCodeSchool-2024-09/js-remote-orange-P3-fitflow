@@ -4,7 +4,6 @@ import type { RequestHandler } from "express";
 
 const edit: RequestHandler = async (req, res, next) => {
     try {
-        console.log('Données reçues:', req.body);
         
         const planSubscription = {
             id: req.body.id,
@@ -20,13 +19,8 @@ const edit: RequestHandler = async (req, res, next) => {
             id: planSubscription.coach_id,
             plan_id: planSubscription.plan_id,
         }
-
-        console.log('Objet coach créé:', coach);
-        
-        console.log('Objet planSubscription créé:', planSubscription);
         
         const affectedRows = await planSubscriptionRepository.update(planSubscription);
-        console.log('Résultat de la mise à jour:', affectedRows);
 
        /*  const affectedRowsCoach = await coachRepository.updatePlan(coach.id, coach);
         console.log('Résultat de la mise à jour:', affectedRowsCoach); */
@@ -36,7 +30,6 @@ const edit: RequestHandler = async (req, res, next) => {
             planSubscription });
             
     } catch (error) {
-        console.error('Erreur lors de la mise à jour:', error);
         next(error);
     }
 }
