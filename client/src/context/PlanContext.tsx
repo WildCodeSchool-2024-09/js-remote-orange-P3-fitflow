@@ -21,6 +21,10 @@ type Coach = {
     first_name: string;
     last_name: string;
     email: string;
+    phone_number: string;
+    profile_picture: string;
+    speciality: string;
+    bio: string;
 }
 
 type User = {
@@ -77,12 +81,11 @@ export function PlanProvider({ children }: { children: ReactNode }) {
             }
             const data = await response.json();
             setUserData(data.user);
-            setCoach(data.coach);
+            setCoach(data.coachData);
             setPlans(data.plans);
             setFeatures(data.features);
             setPlanSubscription(data.planSubscription);
-            console.log("data:", data);
-
+            console.log(data.coachData);
 
         } catch (error) {
             console.error("Erreur lors de la récupération des données:", error);

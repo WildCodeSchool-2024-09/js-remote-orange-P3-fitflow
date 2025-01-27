@@ -5,6 +5,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { usePlanContext } from "@/context/PlanContext";
+import { CircleCheck } from "lucide-react";
 
 type Plan = {
     id: number;
@@ -84,9 +85,16 @@ function PlanItem({ plan, features, selectedBilling, coach, planSubscription }: 
 
                 setDialogOpen(false);
                 toast({
-                    title: `Plan ${plan.plan_name} choisi avec succès`,
-                    description: "Vous pouvez maintenant profiter de votre plan",
-                    className: "bg-green-500 text-white font-medium"
+                    description: (
+                        <div className="flex items-start gap-1">
+                            <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
+                            <div className="flex flex-col items-start gap-1 pl-2">
+                                <p className="text-[#016626] font-medium text-sm">Inscription au plan réussie</p>
+                                <p className="text-[#016626] font-medium text-xs">Vous avez maintenant souscrit à votre plan avec succès.</p>
+                            </div>
+                        </div>
+                    ),
+                    className: "bg-[#EBFBF1] text-[#016626] font-light border border-[#C1F4D4]"
                 });
             }
             return true;

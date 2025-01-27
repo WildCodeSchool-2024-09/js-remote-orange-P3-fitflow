@@ -63,7 +63,10 @@ function PlanContainer() {
                                     plan_id: 0,
                                     first_name: '',
                                     last_name: '',
-                                    email: ''
+                                    email: '',
+                                    phone_number: '',
+                                    speciality: '',
+                                    bio: ''
                                 }}
                                 features={features}
                                 selectedBilling={selectedBilling}
