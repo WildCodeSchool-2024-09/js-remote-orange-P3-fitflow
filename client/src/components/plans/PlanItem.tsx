@@ -23,7 +23,14 @@ type Feature = {
 
 type Coach = {
     id?: number;
+    user_id?: number;
     plan_id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone_number: string;
+    speciality: string;
+    bio: string;
 }
 
 type PlanSubscription = {

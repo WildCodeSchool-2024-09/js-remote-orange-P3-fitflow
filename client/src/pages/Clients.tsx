@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "../components/ui/separator";
-
+import ClientsWrapper from "@/components/clients-coach/ClientsWrapper";
 function ClientsContent() {
     const { fetchCoach } = useUser();
     const { fetchPlans } = usePlanContext();
@@ -26,6 +26,7 @@ function ClientsContent() {
                             <h1 className="text-sm font-medium">Clients</h1>
                         </div>
                     </header>
+                    <ClientsWrapper />
                 </SidebarInset>
             </SidebarProvider>
         </main>

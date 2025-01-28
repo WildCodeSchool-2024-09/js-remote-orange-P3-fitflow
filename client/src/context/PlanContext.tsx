@@ -85,7 +85,6 @@ export function PlanProvider({ children }: { children: ReactNode }) {
             setPlans(data.plans);
             setFeatures(data.features);
             setPlanSubscription(data.planSubscription);
-            console.log(data.coachData);
 
         } catch (error) {
             console.error("Erreur lors de la récupération des données:", error);
