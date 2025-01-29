@@ -19,27 +19,31 @@ import {
 } from "@/components/ui/table";
 
 import { useNavigate } from "react-router-dom";
-import { Search, Trash } from "lucide-react";
-import { Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../ui/select";
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { AddClientDialog } from "./AddClientDialog"
+import DeleteClientDialog from "./DeleteClientDialog";
 
 interface DataTableProps<TData extends { id: number }, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    onDeleteClients: (ids: number[]) => void
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
     columns,
     data,
+    onDeleteClients,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
-
+    const [openAddClientDialog, setOpenAddClientDialog] = useState(false);
+    const [openDeleteClientDialog, setOpenDeleteClientDialog] = useState(false);
     const table = useReactTable({
         data,
         columns,
@@ -74,6 +78,8 @@ export function DataTable<TData extends { id: number }, TValue>({
 
     const navigate = useNavigate();
 
+    const selectedClientIds = table.getFilteredSelectedRowModel().rows.map(row => row.original.id);
+
     return (
         <div className="flex flex-col w-full gap-6">
             <div className="flex flex-col lg:flex-row items-start justify-between w-full h-fit gap-4">
@@ -99,24 +105,39 @@ export function DataTable<TData extends { id: number }, TValue>({
                             <SelectValue placeholder="Genre" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tous</SelectItem>
-                            <SelectItem value="male">Homme</SelectItem>
-                            <SelectItem value="female">Femme</SelectItem>
+                            <SelectItem
+                                value="all"
+                                className="cursor-pointer"
+                            >
+                                Tous
+                            </SelectItem>
+                            <SelectItem
+                                value="male"
+                                className="cursor-pointer"
+                            >
+                                Homme
+                            </SelectItem>
+                            <SelectItem
+                                value="female"
+                                className="cursor-pointer"
+                            >
+                                Femme
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
-
                 <div className="flex items-end justify-end w-fit h-fit gap-2">
-                    <Button
-                        variant="destructive"
-                        className={`${table.getFilteredSelectedRowModel().rows.length === 0 ? "hidden" : ""}`}>
-                        <Trash className="w-4 h-4" />
-                        Supprimer ({table.getFilteredSelectedRowModel().rows.length})
-                    </Button>
-                    <Button>
-                        <Plus className="w-4 h-4" />
-                        Ajouter un client
-                    </Button>
+                    <DeleteClientDialog
+                        open={openDeleteClientDialog}
+                        onOpenChange={setOpenDeleteClientDialog}
+                        numberOfClients={table.getFilteredSelectedRowModel().rows.length}
+                        selectedClientIds={selectedClientIds}
+                        onDelete={onDeleteClients}
+                    />
+                    <AddClientDialog
+                        open={openAddClientDialog}
+                        onOpenChange={setOpenAddClientDialog}
+                    />
                 </div>
             </div>
             <div className="grid grid-cols-1 rounded-md border bg-white">
@@ -184,12 +205,16 @@ export function DataTable<TData extends { id: number }, TValue>({
                             table.setPageSize(Number(value))
                         }}
                     >
-                        <SelectTrigger className="h-8 w-[70px]">
+                        <SelectTrigger className="h-8 w-[70px] cursor-pointer">
                             <SelectValue placeholder={table.getState().pagination.pageSize} />
                         </SelectTrigger>
                         <SelectContent>
                             {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                                <SelectItem key={pageSize} value={`${pageSize}`}>
+                                <SelectItem
+                                    key={pageSize}
+                                    value={`${pageSize}`}
+                                    className="cursor-pointer"
+                                >
                                     {pageSize}
                                 </SelectItem>
                             ))}

@@ -85,7 +85,7 @@ const CountrySelect = ({
     onChange,
 }: CountrySelectProps) => {
     return (
-        <Popover>
+        <Popover modal={true}>
             <PopoverTrigger asChild>
                 <Button
                     type="button"
@@ -144,7 +144,7 @@ const CountrySelectOption = ({
     onChange,
 }: CountrySelectOptionProps) => {
     return (
-        <CommandItem className="gap-2" onSelect={() => onChange(country)}>
+        <CommandItem className="gap-2 cursor-pointer" onSelect={() => onChange(country)}>
             <FlagComponent country={country} countryName={countryName} />
             <span className="flex-1 text-sm">{countryName}</span>
             <span className="text-sm text-foreground/50">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
