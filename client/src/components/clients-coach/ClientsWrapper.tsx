@@ -175,9 +175,13 @@ const clients: Clients[] = [
 ]
 
 function ClientsWrapper() {
+    const onDeleteClients = (ids: number[]) => {
+        console.log(ids);
+    };
+
     return (
         <div className="flex flex-col items-start justify-start w-full h-screen p-6 gap-6">
-            <DataTable columns={columns} data={clients} />
+            <DataTable columns={columns} data={clients} onDeleteClients={onDeleteClients} />
         </div>
     );
 }
