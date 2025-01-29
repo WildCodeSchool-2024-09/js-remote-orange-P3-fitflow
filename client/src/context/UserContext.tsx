@@ -51,7 +51,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
             if (data.coach) {
                 setCoach(data.coach);
-                console.log(data.coach);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des données:", error);
