@@ -6,14 +6,17 @@ import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "../components/ui/separator";
 import ClientsWrapper from "@/components/clients-coach/ClientsWrapper";
+import { ClientsProvider, useClientsContext } from "@/context/ClientsContext";
 function ClientsContent() {
     const { fetchCoach } = useUser();
     const { fetchPlans } = usePlanContext();
+    const { fetchClients } = useClientsContext();
 
     useEffect(() => {
         fetchCoach();
         fetchPlans();
-    }, [fetchCoach, fetchPlans]);
+        fetchClients();
+    }, [fetchCoach, fetchPlans, fetchClients]);
     return (
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
@@ -37,7 +40,9 @@ export default function Clients() {
     return (
         <UserProvider>
             <PlanProvider>
-                <ClientsContent />
+                <ClientsProvider>
+                    <ClientsContent />
+                </ClientsProvider>
             </PlanProvider>
         </UserProvider>
     );

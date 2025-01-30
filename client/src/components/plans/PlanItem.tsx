@@ -180,11 +180,11 @@ function PlanItem({ plan, features, selectedBilling, coach, planSubscription }: 
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
-                        <DialogHeader className="border-b border-gray-200 pb-4">
+                        <DialogHeader className="border-b border-gray-200 p-6">
                             <DialogTitle>Confirmer votre choix</DialogTitle>
                             <DialogDescription>Vous êtes sur le point de choisir le plan {plan.plan_name}.</DialogDescription>
                         </DialogHeader>
-                        <div className="flex flex-col items-start justify-center w-full h-full gap-1">
+                        <div className="flex flex-col items-start justify-center w-full h-full gap-1 px-6">
                             <img
                                 src={
                                     `${plan.id === 1 ? '/icon-plan-free.png'
@@ -209,7 +209,7 @@ function PlanItem({ plan, features, selectedBilling, coach, planSubscription }: 
                                 </span>
                             </p>
                         </div>
-                        <DialogFooter>
+                        <DialogFooter className="px-6 pb-6">
                             <Button onClick={() => {
                                 handleSubscribe();
                                 setDialogOpen(false);

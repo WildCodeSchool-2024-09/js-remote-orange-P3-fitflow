@@ -62,6 +62,10 @@ export const columns: ColumnDef<Clients>[] = [
     {
         accessorKey: "phone",
         header: "Téléphone",
+        cell: ({ row }) => {
+            const phone = row.getValue("phone") as string;
+            return <p>{phone ? `+${phone}` : ""}</p>;
+        },
     },
     {
         accessorKey: "gender",
@@ -76,5 +80,9 @@ export const columns: ColumnDef<Clients>[] = [
     {
         accessorKey: "birth_date",
         header: "Date de naissance",
+        cell: ({ row }) => {
+            const birthDate = row.getValue("birth_date") as string;
+            return <p>{new Date(birthDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>;
+        },
     },
 ]

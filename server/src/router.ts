@@ -62,4 +62,18 @@ router.put("/app/profil",
     coachActions.updateCoach
 );
 
+/* ************************************************************************* */
+// Define clients routes
+
+import clientsActions from "./modules/coach-clients/clientsActions";
+router.get("/app/clients", 
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.browse
+);
+router.post("/app/clients", 
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.validate,
+    clientsActions.add
+);
+
 export default router;
