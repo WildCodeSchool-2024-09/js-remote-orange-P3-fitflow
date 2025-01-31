@@ -75,5 +75,9 @@ router.post("/app/clients",
     clientsActions.validate,
     clientsActions.add
 );
+router.delete("/app/clients", 
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.destroy
+);
 
 export default router;
