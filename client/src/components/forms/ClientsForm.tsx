@@ -12,6 +12,11 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { fr } from 'date-fns/locale';
 import { Textarea } from "../ui/textarea";
+import { usePlanContext } from "@/context/PlanContext";
+import { useClientsContext } from "@/context/ClientsContext";
+import { toast, useToast } from "@/hooks/use-toast";
+import { CircleCheck } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 type ServerError = {
     message: string;
@@ -35,16 +40,80 @@ function ClientsForm({ onClose }: ClientsFormProps) {
     const [notes, setNotes] = useState<string>("");
 
     const isMobile = useIsMobile();
+    const { planSubscription } = usePlanContext();
+    const { fetchClients } = useClientsContext();
+    const { toast } = useToast();
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setServerErrors([]);
+
+        const clientData = {
+            coach_id: planSubscription?.coach_id || "",
+            email: email,
+            first_name: firstName,
+            last_name: lastName,
+            phone: phoneNumber.replace(/\D/g, ''),
+            gender: gender,
+            birth_date: birthDate,
+            weight_kg: weight,
+            height_cm: height,
+            notes: notes.trim()
+        };
+
+        // Débogage des données envoyées
+        console.log("Données envoyées:", clientData);
+
+        try {
+            const response = await fetch("http://localhost:3310/app/clients", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(clientData),
+            });
+
+            // Débogage de la réponse
+            console.log("Status:", response.status);
+            const data = await response.json();
+            console.log("Réponse:", data);
+
+            if (response.status === 400) {
+                setServerErrors(data.errors);
+                return;
+            }
+
+            if (response.ok) {
+                onClose();
+                await fetchClients();
+                toast({
+                    description: (
+                        <div className="flex items-start gap-1">
+                            <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
+                            <div className="flex flex-col items-start gap-1 pl-2">
+                                <p className="text-[#016626] font-medium text-sm">Client ajouté</p>
+                                <p className="text-[#016626] font-medium text-xs">Le client a été ajouté avec succès.</p>
+                            </div>
+                        </div>
+                    ),
+                    className: "bg-[#EBFBF1] text-[#016626] font-light border border-[#C1F4D4]"
+                });
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+            toast({
+                variant: "destructive",
+                description: "Une erreur est survenue lors de l'ajout du client.",
+            });
+        }
     }
 
     return (
         <form
             onSubmit={onSubmit}
-            className={`flex flex-col items-start justify-start gap-6 ${isMobile ? "px-4" : ""}`}>
+            className={`flex flex-col items-start justify-start gap-6 p-6 ${isMobile ? "px-4" : ""}`}>
             <div className="flex flex-col items-start justify-start gap-2 w-full">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -212,6 +281,21 @@ function ClientsForm({ onClose }: ClientsFormProps) {
                     Ajouter
                 </Button>
             </div>
+            {serverErrors.length > 0 && (
+                <Alert
+                    className="bg-[#FEEBEB] border-[#FFC9C9]"
+                    variant="destructive"
+                    hidden={serverErrors.length === 0}>
+                    <AlertTitle>Erreur</AlertTitle>
+                    <AlertDescription>
+                        <ul className="list-disc pl-4">
+                            {serverErrors.map((error, index) => (
+                                <li key={index}>{error.message}</li>
+                            ))}
+                        </ul>
+                    </AlertDescription>
+                </Alert>
+            )}
         </form>
     );
 }
