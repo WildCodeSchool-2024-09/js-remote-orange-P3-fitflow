@@ -34,7 +34,7 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
                         </DialogDescription>
                     </DialogHeader>
                     <ScrollArea className="overflow-auto">
-                        <ClientsForm onClose={() => onOpenChange(false)} />
+                        <ClientsForm onClose={() => onOpenChange(false)} mode="add" />
                     </ScrollArea>
                 </DialogContent>
             </Dialog>
@@ -54,7 +54,7 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
                                 Ajouter un client à votre liste de clients
                             </DrawerDescription>
                         </DrawerHeader>
-                        <ClientsForm onClose={() => onOpenChange(false)} />
+                        <ClientsForm onClose={() => onOpenChange(false)} mode="add" />
                     </ScrollArea>
                 </DrawerContent>
             </Drawer>

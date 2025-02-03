@@ -30,7 +30,7 @@ const validate: RequestHandler = async (req, res, next) => {
         errors.push({ field: "email", message: "L'email n'est pas valide" });
     } else {
         const exists = await clientsRepository.checkEmailExistence(email, coachId.id);
-        if (exists) {
+        if (exists && exists.id !== Number(req.params.id)) {
             errors.push({ field: "email", message: "Cet email existe déjà dans votre liste de clients." });
         }
     }
