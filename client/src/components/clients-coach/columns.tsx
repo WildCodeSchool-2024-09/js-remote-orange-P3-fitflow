@@ -69,7 +69,7 @@ export const columns: ColumnDef<Clients>[] = [
     },
     {
         accessorKey: "gender",
-        header: "Sexe",
+        header: "Genre",
         filterFn: "equals",
         cell: ({ row }) => {
             const gender = row.getValue("gender") as string;

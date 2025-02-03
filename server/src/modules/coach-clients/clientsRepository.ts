@@ -90,6 +90,10 @@ class ClientsRepository {
     }
 
     async delete(id: number) {
+        if (typeof id !== 'number' || isNaN(id)) {
+            throw new Error(`ID invalide: ${id}`);
+        }
+
         const [result] = await databaseClient.query<Result>(
             "DELETE FROM clients WHERE id = ?",
             [id]

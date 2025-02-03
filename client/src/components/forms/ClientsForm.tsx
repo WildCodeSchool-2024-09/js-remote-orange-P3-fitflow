@@ -14,7 +14,7 @@ import { fr } from 'date-fns/locale';
 import { Textarea } from "../ui/textarea";
 import { usePlanContext } from "@/context/PlanContext";
 import { useClientsContext } from "@/context/ClientsContext";
-import { toast, useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { CircleCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 

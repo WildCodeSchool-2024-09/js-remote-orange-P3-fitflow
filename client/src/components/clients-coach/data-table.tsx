@@ -30,13 +30,11 @@ import DeleteClientDialog from "./DeleteClientDialog";
 interface DataTableProps<TData extends { id: number }, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
-    onDeleteClients: (ids: number[]) => void
 }
 
 export function DataTable<TData extends { id: number }, TValue>({
     columns,
     data,
-    onDeleteClients,
 }: DataTableProps<TData, TValue>) {
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -79,6 +77,7 @@ export function DataTable<TData extends { id: number }, TValue>({
     const navigate = useNavigate();
 
     const selectedClientIds = table.getFilteredSelectedRowModel().rows.map(row => row.original.id);
+    console.log(selectedClientIds);
 
     return (
         <div className="flex flex-col w-full gap-6">
@@ -132,7 +131,7 @@ export function DataTable<TData extends { id: number }, TValue>({
                         onOpenChange={setOpenDeleteClientDialog}
                         numberOfClients={table.getFilteredSelectedRowModel().rows.length}
                         selectedClientIds={selectedClientIds}
-                        onDelete={onDeleteClients}
+                        table={table}
                     />
                     <AddClientDialog
                         open={openAddClientDialog}

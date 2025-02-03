@@ -170,7 +170,12 @@ const edit: RequestHandler = async (req, res, next) => {
 const destroy: RequestHandler = async (req, res, next) => {
     try {
         const clientId = Number(req.body.id);
-        await clientsRepository.delete(clientId);
+        const clientIds = req.body.ids;
+        if (clientId) {
+            await clientsRepository.delete(clientId);
+        } else if (clientIds) {
+            await clientsRepository.deleteList(clientIds);
+        }
         res.sendStatus(204);
     } catch (err) {
         next(err);
@@ -196,6 +201,5 @@ const destroyList: RequestHandler = async (req, res, next) => {
         next(err);
     }
 }
-
 
 export default { validate, browse, read, add, edit, destroy, destroyWithParams, destroyList };
