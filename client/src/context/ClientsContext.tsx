@@ -37,10 +37,9 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
                 throw new Error("Erreur lors de la récupération des clients");
             }
             const data = await response.json();
-            console.log("Données clients reçues:", data);
             setClients(data);
         } catch (error) {
-            console.error("Erreur lors de la récupération des clients:", error);
+            // TODO: handle error
         }
     }, []);
 
@@ -48,7 +47,7 @@ export function ClientsProvider({ children }: { children: ReactNode }) {
         <ClientsContext.Provider value={{
             clients,
             setClients,
-            fetchClients
+            fetchClients,
         }}>
             {children}
         </ClientsContext.Provider>

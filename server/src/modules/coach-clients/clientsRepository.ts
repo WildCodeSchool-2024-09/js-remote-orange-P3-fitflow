@@ -34,11 +34,11 @@ class ClientsRepository {
     }
 
     async checkEmailExistence(email: string, coachId: number) {
-        const [result] = await databaseClient.query<Rows>(
-            "SELECT * FROM clients WHERE email = ? AND coach_id = ?",
+        const [rows] = await databaseClient.query<Rows>(
+            "SELECT id FROM clients WHERE email = ? AND coach_id = ?",
             [email, coachId]
         );
-        return result.length > 0;
+        return rows[0] || null;
     }
 
     async create(client: Omit<Client, "id">) {

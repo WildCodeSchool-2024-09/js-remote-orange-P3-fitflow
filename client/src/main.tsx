@@ -13,6 +13,7 @@ import Workouts from "./pages/Workouts";
 import Exercices from "./pages/Exercices";
 import Plans from "./pages/Plans";
 import Profil from "./pages/Profil";
+import ClientDetails from "./pages/ClientDetails";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: "/app/clients",
     element: <Clients />
+  },
+  {
+    path: "/app/clients/:id",
+    element: <ClientDetails />
   },
   {
     path: "/app/cours",

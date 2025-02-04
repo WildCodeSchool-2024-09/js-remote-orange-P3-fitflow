@@ -75,9 +75,23 @@ router.post("/app/clients",
     clientsActions.validate,
     clientsActions.add
 );
+router.get("/app/clients/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.read
+);
+router.put("/app/clients/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.validate,
+    clientsActions.edit
+);
+
 router.delete("/app/clients", 
     cookieJwtAuth.cookieJwtAuth,
     clientsActions.destroy
+);
+router.delete("/app/clients/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    clientsActions.destroyWithParams
 );
 
 export default router;

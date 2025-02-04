@@ -17,6 +17,7 @@ import { useClientsContext } from "@/context/ClientsContext";
 import { useToast } from "@/hooks/use-toast";
 import { CircleCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { useParams } from "react-router-dom";
 
 type ServerError = {
     message: string;
@@ -25,28 +26,45 @@ type ServerError = {
 
 interface ClientsFormProps {
     onClose: () => void;
+    client?: {
+        id: number;
+        coach_id: number;
+        email: string;
+        first_name: string;
+        last_name: string;
+        phone: string;
+        gender: string;
+        birth_date: string;
+        weight_kg: number;
+        height_cm: number;
+        notes: string;
+    };
+    mode: "add" | "edit";
 }
 
-function ClientsForm({ onClose }: ClientsFormProps) {
+function ClientsForm({ onClose, client, mode }: ClientsFormProps) {
     const [serverErrors, setServerErrors] = useState<ServerError[]>([]);
-    const [email, setEmail] = useState<string>("");
-    const [firstName, setFirstName] = useState<string>("");
-    const [lastName, setLastName] = useState<string>("");
-    const [phoneNumber, setPhoneNumber] = useState<string>("");
-    const [gender, setGender] = useState<string>("");
-    const [birthDate, setBirthDate] = useState<string>("");
-    const [weight, setWeight] = useState<number | "">("");
-    const [height, setHeight] = useState<number | "">("");
-    const [notes, setNotes] = useState<string>("");
+    const [email, setEmail] = useState<string>(client?.email || "");
+    const [firstName, setFirstName] = useState<string>(client?.first_name || "");
+    const [lastName, setLastName] = useState<string>(client?.last_name || "");
+    const [phoneNumber, setPhoneNumber] = useState<string>(`+${client?.phone}` || "");
+    const [gender, setGender] = useState<string>(client?.gender || "");
+    const [birthDate, setBirthDate] = useState<string>(client?.birth_date || "");
+    const [weight, setWeight] = useState<number | "">(client?.weight_kg || "");
+    const [height, setHeight] = useState<number | "">(client?.height_cm || "");
+    const [notes, setNotes] = useState<string>(client?.notes || "");
 
     const isMobile = useIsMobile();
     const { planSubscription } = usePlanContext();
     const { fetchClients } = useClientsContext();
     const { toast } = useToast();
+    const { id } = useParams();
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setServerErrors([]);
+
+        const formattedBirthDate = birthDate ? birthDate.split('T')[0] : '';
 
         const clientData = {
             coach_id: planSubscription?.coach_id || "",
@@ -55,18 +73,18 @@ function ClientsForm({ onClose }: ClientsFormProps) {
             last_name: lastName,
             phone: phoneNumber.replace(/\D/g, ''),
             gender: gender,
-            birth_date: birthDate,
+            birth_date: formattedBirthDate,
             weight_kg: weight,
             height_cm: height,
             notes: notes.trim()
         };
 
-        // Débogage des données envoyées
-        console.log("Données envoyées:", clientData);
+        const url = mode === "add" ? "http://localhost:3310/app/clients" : `http://localhost:3310/app/clients/${id}`;
+        const method = mode === "add" ? "POST" : "PUT";
 
         try {
-            const response = await fetch("http://localhost:3310/app/clients", {
-                method: "POST",
+            const response = await fetch(url, {
+                method: method,
                 credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,10 +93,27 @@ function ClientsForm({ onClose }: ClientsFormProps) {
                 body: JSON.stringify(clientData),
             });
 
-            // Débogage de la réponse
-            console.log("Status:", response.status);
+            // Vérifier d'abord si la réponse est 204 (No Content)
+            if (response.status === 204) {
+                onClose();
+                await fetchClients();
+                toast({
+                    description: (
+                        <div className="flex items-start gap-1">
+                            <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
+                            <div className="flex flex-col items-start gap-1 pl-2">
+                                <p className="text-[#016626] font-medium text-sm">Client {mode === "add" ? "ajouté" : "modifié"}</p>
+                                <p className="text-[#016626] font-medium text-xs">Le client a été {mode === "add" ? "ajouté" : "modifié"} avec succès.</p>
+                            </div>
+                        </div>
+                    ),
+                    className: "bg-[#EBFBF1] text-[#016626] font-light border border-[#C1F4D4]"
+                });
+                return;
+            }
+
+            // Pour les autres réponses, tenter de parser le JSON
             const data = await response.json();
-            console.log("Réponse:", data);
 
             if (response.status === 400) {
                 setServerErrors(data.errors);
@@ -93,8 +128,8 @@ function ClientsForm({ onClose }: ClientsFormProps) {
                         <div className="flex items-start gap-1">
                             <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
                             <div className="flex flex-col items-start gap-1 pl-2">
-                                <p className="text-[#016626] font-medium text-sm">Client ajouté</p>
-                                <p className="text-[#016626] font-medium text-xs">Le client a été ajouté avec succès.</p>
+                                <p className="text-[#016626] font-medium text-sm">Client {mode === "add" ? "ajouté" : "modifié"}</p>
+                                <p className="text-[#016626] font-medium text-xs">Le client a été {mode === "add" ? "ajouté" : "modifié"} avec succès.</p>
                             </div>
                         </div>
                     ),
@@ -105,7 +140,7 @@ function ClientsForm({ onClose }: ClientsFormProps) {
             console.error("Erreur:", error);
             toast({
                 variant: "destructive",
-                description: "Une erreur est survenue lors de l'ajout du client.",
+                description: `Une erreur est survenue lors de ${mode === "add" ? "l'ajout" : "la modification"} du client.`,
             });
         }
     }
@@ -278,7 +313,7 @@ function ClientsForm({ onClose }: ClientsFormProps) {
                     Annuler
                 </Button>
                 <Button type="submit">
-                    Ajouter
+                    {mode === "add" ? "Ajouter" : "Modifier"}
                 </Button>
             </div>
             {serverErrors.length > 0 && (

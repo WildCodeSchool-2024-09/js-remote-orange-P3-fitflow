@@ -6,7 +6,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollArea } from "../ui/scroll-area";
 import { useClientsContext } from "@/context/ClientsContext";
 import { toast } from "@/hooks/use-toast";
-
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 interface DeleteClientDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -23,7 +25,20 @@ function DeleteClientDialog({
     table
 }: DeleteClientDialogProps) {
     const isMobile = useIsMobile();
+    const [isTablet, setIsTablet] = useState(window.innerWidth < 992);
     const { fetchClients } = useClientsContext();
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsTablet(window.innerWidth < 992);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const handleDeleteSingleClient = async () => {
         try {
@@ -98,6 +113,44 @@ function DeleteClientDialog({
         }
     };
 
+    const handleDeleteClientParams = async () => {
+        try {
+            const response = await fetch(`http://localhost:3310/app/clients/${id}`, {
+                method: "DELETE",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: id })
+            });
+
+            if (response.status === 204) {
+                await fetchClients();
+                onOpenChange(false);
+                navigate("/app/clients");
+                toast({
+                    description: (
+                        <div className="flex items-start gap-1">
+                            <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
+                            <div className="flex flex-col items-start gap-1 pl-2">
+                                <p className="text-[#016626] font-medium text-sm">Client supprimé</p>
+                                <p className="text-[#016626] font-medium text-xs">Le client a été supprimé avec succès.</p>
+                            </div>
+                        </div>
+                    ),
+                    className: "bg-[#EBFBF1] text-[#016626] font-light border border-[#C1F4D4]"
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                description: "Une erreur est survenue lors de la suppression du client.",
+            });
+        }
+    }
+
+    const isParams = id ? true : false;
+
     return (
         !isMobile ? (
             <Dialog open={open} onOpenChange={onOpenChange}>
@@ -106,7 +159,7 @@ function DeleteClientDialog({
                         variant="destructive"
                         className={`${numberOfClients === 0 ? "hidden" : ""}`}>
                         <Trash className="w-4 h-4" />
-                        Supprimer ({numberOfClients})
+                        {isParams && isTablet ? "" : `Supprimer (${numberOfClients})`}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="w-full max-w-lg gap-6">
@@ -119,7 +172,7 @@ function DeleteClientDialog({
                     <div className="flex items-center justify-end gap-2 pt-4 pb-6 px-6">
                         <Button
                             variant="destructive"
-                            onClick={numberOfClients > 1 ? handleDeleteMultipleClients : handleDeleteSingleClient}
+                            onClick={isParams ? handleDeleteClientParams : numberOfClients > 1 ? handleDeleteMultipleClients : handleDeleteSingleClient}
                         >
                             {numberOfClients > 1 ? "Supprimer tous" : "Supprimer"}
                         </Button>
@@ -138,7 +191,7 @@ function DeleteClientDialog({
                         className={`${numberOfClients === 0 ? "hidden" : ""}`}
                     >
                         <Trash className="w-4 h-4" />
-                        Supprimer ({numberOfClients})
+                        {isParams && isTablet ? "" : `Supprimer (${numberOfClients})`}
                     </Button>
                 </DrawerTrigger>
                 <DrawerContent className="pb-6 gap-6 fixed bottom-0 left-0 right-0 max-h-[90dvh]">
@@ -152,7 +205,7 @@ function DeleteClientDialog({
                         <div className="flex items-center justify-start gap-2 pt-4 px-4">
                             <Button
                                 variant="destructive"
-                                onClick={numberOfClients > 1 ? handleDeleteMultipleClients : handleDeleteSingleClient}
+                                onClick={isParams ? handleDeleteClientParams : numberOfClients > 1 ? handleDeleteMultipleClients : handleDeleteSingleClient}
                             >
                                 {numberOfClients > 1 ? "Supprimer tous" : "Supprimer"}
                             </Button>
