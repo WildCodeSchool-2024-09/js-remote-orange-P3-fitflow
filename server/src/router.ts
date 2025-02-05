@@ -94,4 +94,18 @@ router.delete("/app/clients/:id",
     clientsActions.destroyWithParams
 );
 
+/* ************************************************************************* */
+// Define cours routes
+
+import coursActions from "./modules/cours/coursActions";
+router.get("/app/cours", 
+    cookieJwtAuth.cookieJwtAuth,
+    coursActions.browse
+);
+router.post("/app/cours", 
+    cookieJwtAuth.cookieJwtAuth,
+    coursActions.validate,
+    coursActions.add
+);
+
 export default router;

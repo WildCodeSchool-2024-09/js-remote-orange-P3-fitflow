@@ -120,7 +120,7 @@ function ClientsForm({ onClose, client, mode }: ClientsFormProps) {
                 return;
             }
 
-            if (response.ok) {
+            if (response.status === 201) {
                 onClose();
                 await fetchClients();
                 toast({
@@ -137,7 +137,6 @@ function ClientsForm({ onClose, client, mode }: ClientsFormProps) {
                 });
             }
         } catch (error) {
-            console.error("Erreur:", error);
             toast({
                 variant: "destructive",
                 description: `Une erreur est survenue lors de ${mode === "add" ? "l'ajout" : "la modification"} du client.`,
