@@ -5,15 +5,19 @@ import { useEffect } from "react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "../components/ui/separator";
+import { CoursProvider, useCoursContext } from "@/context/CoursContext";
+import CoursWrapper from "@/components/cours/CoursWrapper";
 
 function CoursContent() {
     const { fetchCoach } = useUser();
     const { fetchPlans } = usePlanContext();
+    const { fetchCours } = useCoursContext();
 
     useEffect(() => {
         fetchCoach();
         fetchPlans();
-    }, [fetchCoach, fetchPlans]);
+        fetchCours();
+    }, [fetchCoach, fetchPlans, fetchCours]);
     return (
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
@@ -26,6 +30,7 @@ function CoursContent() {
                             <h1 className="text-sm font-medium">Cours</h1>
                         </div>
                     </header>
+                    <CoursWrapper />
                 </SidebarInset>
             </SidebarProvider>
         </main>
@@ -36,7 +41,9 @@ export default function Cours() {
     return (
         <UserProvider>
             <PlanProvider>
-                <CoursContent />
+                <CoursProvider>
+                    <CoursContent />
+                </CoursProvider>
             </PlanProvider>
         </UserProvider>
     );

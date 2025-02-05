@@ -28,8 +28,8 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { planSubscription } = usePlanContext();
     const navigate = useNavigate();
 
-    const daysRemaining = planSubscription?.subscription_start_date && planSubscription?.subscription_end_date
-        ? Math.ceil((new Date(planSubscription.subscription_end_date).getTime() - new Date(planSubscription.subscription_start_date).getTime()) / (1000 * 60 * 60 * 24))
+    const daysRemaining = planSubscription?.subscription_end_date
+        ? Math.ceil((new Date(planSubscription.subscription_end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
         : 0;
 
     return (
