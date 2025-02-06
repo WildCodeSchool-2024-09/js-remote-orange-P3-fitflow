@@ -1,7 +1,7 @@
 import { AtSignIcon, CalendarIcon, ContactIcon, NotebookIcon, PhoneIcon, RulerIcon, UsersIcon, WeightIcon } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
-
+import { cn } from "@/lib/utils";
 type Client = {
     id: number;
     first_name: string;
@@ -18,7 +18,7 @@ type Client = {
 function AsideClientDetails({ client, openDetails, isTablet }: { client: Client, openDetails: boolean, isTablet: boolean }) {
 
     return (
-        <aside className={`flex flex-col items-start justify-start w-full max-w-lg h-full border-l border-gray-200 ${isTablet && openDetails === false ? "hidden" : isTablet && openDetails === true ? "flex max-w-full border-l-0" : ""}`}>
+        <aside className={cn("flex flex-col items-start justify-start w-full max-w-lg h-full border-l border-gray-200", isTablet && openDetails === false ? "hidden" : isTablet && openDetails === true ? "flex max-w-full border-l-0" : "")}>
             <header className="flex items-center justify-between w-full p-4 border-b border-gray-200">
                 <h2>Details</h2>
             </header>

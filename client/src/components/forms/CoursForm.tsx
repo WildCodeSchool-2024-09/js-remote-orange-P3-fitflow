@@ -66,21 +66,20 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
         setServerErrors([]);
 
         const formattedStartDate = startDate ? startDate.split('T')[0] : '';
-        const formattedStartTime = startTime ? startTime.split('T')[0] : '';
-        const formattedEndTime = endTime ? endTime.split('T')[0] : '';
+        const formattedPrice = isFree ? 0 : (price === '' ? 0 : Number(price));
 
         const coursData = {
             coach_id: planSubscription?.coach_id || "",
             title: title,
             current_status: currentStatus,
             description_notes: descriptionNotes,
-            price: price,
-            is_free: isFree,
+            price: formattedPrice,
+            is_free: Boolean(isFree),
             start_date: formattedStartDate,
-            start_time: formattedStartTime,
-            end_time: formattedEndTime,
+            start_time: startTime,
+            end_time: endTime,
             location_link: locationLink,
-            max_participants: maxParticipants,
+            max_participants: Number(maxParticipants),
         };
 
         const url = mode === "add" ? "http://localhost:3310/app/cours" : `http://localhost:3310/app/cours/${id}`;
@@ -105,8 +104,8 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
                         <div className="flex items-start gap-1">
                             <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
                             <div className="flex flex-col items-start gap-1 pl-2">
-                                <p className="text-[#016626] font-medium text-sm">Client {mode === "add" ? "ajouté" : "modifié"}</p>
-                                <p className="text-[#016626] font-medium text-xs">Le client a été {mode === "add" ? "ajouté" : "modifié"} avec succès.</p>
+                                <p className="text-[#016626] font-medium text-sm">Cours {mode === "add" ? "ajouté" : "modifié"}</p>
+                                <p className="text-[#016626] font-medium text-xs">Le cours a été {mode === "add" ? "ajouté" : "modifié"} avec succès.</p>
                             </div>
                         </div>
                     ),
