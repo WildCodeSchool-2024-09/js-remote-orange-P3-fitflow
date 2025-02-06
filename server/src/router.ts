@@ -108,4 +108,19 @@ router.post("/app/cours",
     coursActions.add
 );
 
+router.get("/app/cours/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    coursActions.read
+);
+router.put("/app/cours/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    coursActions.validate,
+    coursActions.edit
+);
+
+router.delete("/app/cours/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    coursActions.destroy
+);
+
 export default router;
