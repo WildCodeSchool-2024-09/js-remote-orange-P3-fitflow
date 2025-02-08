@@ -77,7 +77,6 @@ export function DataTable<TData extends { id: number }, TValue>({
     const navigate = useNavigate();
 
     const selectedClientIds = table.getFilteredSelectedRowModel().rows.map(row => row.original.id);
-    console.log(selectedClientIds);
 
     return (
         <div className="flex flex-col w-full gap-6">

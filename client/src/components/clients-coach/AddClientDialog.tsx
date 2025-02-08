@@ -6,7 +6,6 @@ import { DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrig
 import { Drawer } from "../ui/drawer";
 import ClientsForm from "../forms/ClientsForm";
 import { ScrollArea } from "../ui/scroll-area";
-
 interface AddClientDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -26,7 +25,8 @@ export function AddClientDialog({ open, onOpenChange }: AddClientDialogProps) {
                         Ajouter un client
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="w-full max-w-4xl gap-6 max-h-[90dvh] overflow-auto">
+                <DialogContent
+                    className="w-full max-w-4xl gap-6 max-h-[90dvh] overflow-auto">
                     <DialogHeader className="flex flex-col items-start justify-start gap-2 p-6 border-b border-gray-200 pb-4">
                         <DialogTitle>Ajouter un client</DialogTitle>
                         <DialogDescription>
