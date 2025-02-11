@@ -98,6 +98,7 @@ router.delete("/app/clients/:id",
 // Define cours routes
 
 import coursActions from "./modules/cours/coursActions";
+import coursSubscriptionsActions from "./modules/cours-subscriptions/coursSubscriptionsActions";
 router.get("/app/cours", 
     cookieJwtAuth.cookieJwtAuth,
     coursActions.browse
@@ -112,12 +113,15 @@ router.get("/app/cours/:id",
     cookieJwtAuth.cookieJwtAuth,
     coursActions.read
 );
+router.post("/app/cours/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    coursSubscriptionsActions.addParticipant
+);
 router.put("/app/cours/:id",
     cookieJwtAuth.cookieJwtAuth,
     coursActions.validate,
     coursActions.edit
 );
-
 router.delete("/app/cours/:id",
     cookieJwtAuth.cookieJwtAuth,
     coursActions.destroy

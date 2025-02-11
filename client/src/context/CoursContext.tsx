@@ -13,6 +13,7 @@ type Cours = {
     end_time: string;
     location_link: string;
     max_participants: number;
+    participants: any[];
 }
 
 type CoursContextType = {
