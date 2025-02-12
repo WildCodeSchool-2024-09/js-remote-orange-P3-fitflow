@@ -22,21 +22,15 @@ export const columns: ColumnDef<Clients>[] = [
                 checked={table.getIsAllRowsSelected() || (table.getIsSomeRowsSelected() && "indeterminate")}
                 onCheckedChange={(value) => {
                     table.toggleAllRowsSelected(!!value);
-                    setTimeout(() => {
-                        console.log("Lignes sélectionnées:", table.getSelectedRowModel().rows.map(row => row.original));
-                    }, 0);
                 }}
                 aria-label="Select all"
             />
         ),
-        cell: ({ row, table }) => (
+        cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => {
                     row.toggleSelected(!!value);
-                    setTimeout(() => {
-                        console.log("Lignes sélectionnées:", table.getSelectedRowModel().rows.map(row => row.original));
-                    }, 0);
                 }}
                 aria-label="Select row"
                 onClick={(e) => {

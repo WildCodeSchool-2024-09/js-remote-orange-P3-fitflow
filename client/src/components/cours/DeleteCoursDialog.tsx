@@ -30,7 +30,11 @@ function DeleteCoursDialog({ open, onOpenChange, isTablet }: DeleteCoursDialogPr
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id: id })
+                body: JSON.stringify({
+                    id: id,
+                    is_delete_participant: false,
+                    is_multiple_delete: false,
+                })
             });
 
             if (response.status === 204) {

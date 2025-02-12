@@ -1,6 +1,7 @@
 import coursRepository from "./coursRepository";
 import coachRepository from "../coach/coachRepository";
 import type { RequestHandler } from "express";
+import coursSubscriptionsRepository from "../cours-subscriptions/coursSubscriptionsRepository";
 
 type User = {
     user: any;
@@ -91,10 +92,18 @@ const read: RequestHandler = async (req, res, next) => {
     try {
         const coursId = Number(req.params.id);
         const cours = await coursRepository.read(coursId);
+        
         if (cours === null) {
             res.sendStatus(404);
         } else {
-            res.json(cours);
+            // Récupérer les participants
+            const participants = await coursSubscriptionsRepository.readAllClients(coursId);
+            
+            // Combiner les données du cours et des participants
+            res.json({
+                ...cours,
+                participants
+            });
         }
     } catch (err) {
         next(err);
@@ -115,6 +124,7 @@ const add: RequestHandler = async (req, res, next) => {
             end_time: req.body.end_time,
             location_link: req.body.location_link,
             max_participants: req.body.max_participants,
+            participants: [],
         }
         const insertId = await coursRepository.create(newCours);
         res.status(201).json({ insertId });
@@ -138,6 +148,7 @@ const edit: RequestHandler = async (req, res, next) => {
             end_time: req.body.end_time,
             location_link: req.body.location_link,
             max_participants: req.body.max_participants,
+            participants: [],
         }
         const affectedRows = await coursRepository.update(cours);
         if (affectedRows === 0) {
@@ -152,8 +163,26 @@ const edit: RequestHandler = async (req, res, next) => {
 
 const destroy: RequestHandler = async (req, res, next) => {
     try {
+        const isDeleteParticipant = req.body.is_delete_participant;
+        const isMultipleDelete = req.body.is_multiple_delete;
         const coursId = Number(req.params.id);
-        await coursRepository.delete(coursId);
+        
+        if (isDeleteParticipant) {
+            // Vérification que client_id est un nombre
+            const clientId = Number(req.body.client_id);
+            if (isNaN(clientId)) {
+                res.status(400).json({ error: "client_id invalide" });
+            }
+            await coursSubscriptionsRepository.deleteParticipant(coursId, clientId);
+        } else if (isMultipleDelete) {
+            // Vérification que client_id est un tableau
+            if (!Array.isArray(req.body.client_id)) {
+                res.status(400).json({ error: "client_id doit être un tableau pour la suppression multiple" });
+            }
+            await coursSubscriptionsRepository.deleteAllParticipants(coursId);
+        } else {
+            await coursRepository.delete(coursId);
+        }
         res.sendStatus(204);
     } catch (err) {
         next(err);
