@@ -71,10 +71,10 @@ class CoursSubscriptionsRepository {
         return result;
     }
 
-    async deleteAllParticipants(courseId: number) {
+    async deleteMultipleParticipants(courseId: number, clientIds: number[]) {
         const [result] = await databaseClient.query<Result>(
-            `DELETE FROM course_participants WHERE course_id = ?`,
-            [courseId]
+            `DELETE FROM course_participants WHERE course_id = ? AND client_id IN (?)`,
+            [courseId, clientIds]
         );
         return result;
     }

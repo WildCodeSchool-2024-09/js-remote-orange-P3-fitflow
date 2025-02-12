@@ -45,6 +45,10 @@ export default function CoursDetailsWrapper({ course }: { course: Course }) {
     };
 
     useEffect(() => {
+        refreshCoursData();
+    }, [id]);
+
+    useEffect(() => {
         const handleResize = () => {
             setIsTablet(window.innerWidth < 1025);
         };
@@ -58,7 +62,7 @@ export default function CoursDetailsWrapper({ course }: { course: Course }) {
         <div className="flex flex-col items-start justify-start w-full h-screen">
             <Toaster />
             <header className="flex items-center justify-between w-full py-4 px-6 border-b border-gray-200">
-                <h2 className="text-sm font-medium">{course.title}</h2>
+                <h2 className="text-sm font-medium">{courseData.title}</h2>
                 <div className="flex items-center justify-center gap-2">
                     <EditCoursDialog
                         open={openEditCoursDialog}
@@ -81,7 +85,12 @@ export default function CoursDetailsWrapper({ course }: { course: Course }) {
                 </div>
             </header>
             <div className="flex items-start justify-start w-full h-full">
-                <CoursSubscriptions isTablet={isTablet} openDetails={openDetails} />
+                <CoursSubscriptions
+                    isTablet={isTablet}
+                    openDetails={openDetails}
+                    refreshCoursData={refreshCoursData}
+                    cours={courseData}
+                />
                 <AsideCoursDetails course={courseData} isTablet={isTablet} openDetails={openDetails} />
             </div>
         </div>

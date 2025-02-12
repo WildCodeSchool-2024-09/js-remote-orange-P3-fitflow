@@ -82,7 +82,16 @@ const browse: RequestHandler = async (req, res, next) => {
         }
         const coachId = await coachRepository.getCoachId(userData.user.id);
         const cours = await coursRepository.readAll(coachId.id);
-        res.json(cours);
+        
+        // Récupérer le nombre de participants pour chaque cours
+        const coursWithParticipantsCount = await Promise.all(cours.map(async (course) => {
+            const participants = await coursSubscriptionsRepository.readAllClients(course.id);
+            return {
+                ...course,
+                participants_count: participants.length // Ajout du nombre de participants
+            };
+        }));
+        res.json(coursWithParticipantsCount);
     } catch (err) {
         next(err);
     }
@@ -179,7 +188,7 @@ const destroy: RequestHandler = async (req, res, next) => {
             if (!Array.isArray(req.body.client_id)) {
                 res.status(400).json({ error: "client_id doit être un tableau pour la suppression multiple" });
             }
-            await coursSubscriptionsRepository.deleteAllParticipants(coursId);
+            await coursSubscriptionsRepository.deleteMultipleParticipants(coursId, req.body.client_id);
         } else {
             await coursRepository.delete(coursId);
         }

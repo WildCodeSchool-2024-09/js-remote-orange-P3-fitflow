@@ -1,3 +1,21 @@
+import CoursItem from "../cours/CoursItem";
+
+type Cours = {
+    id: number;
+    coach_id: number;
+    title: string;
+    current_status: string;
+    description_notes: string;
+    price: number;
+    is_free: boolean;
+    start_date: string;
+    start_time: string;
+    end_time: string;
+    location_link: string;
+    max_participants: number;
+    participants_count: number;
+}
+
 type Client = {
     id: number;
     first_name: string;
@@ -9,12 +27,18 @@ type Client = {
     weight_kg: number;
     height_cm: number;
     notes: string;
+    cours: Cours[];
 }
 
-function ClientCourseSubscription({ client, openDetails }: { client: Client, openDetails: boolean }) {
+function ClientCourseSubscription({ client }: { client: Client, participants: any[] }) {
     return (
-        <div className={`flex flex-col items-center justify-center w-full h-full p-6 ${openDetails === false ? "flex" : "hidden"}`}>
-            <h2>Cours de {client.first_name} {client.last_name}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 items-start justify-start w-full h-fit p-6 gap-4">
+            {client?.cours?.map((cours) => (
+                <CoursItem
+                    key={cours.id}
+                    cours={cours}
+                />
+            ))}
         </div>
     );
 }

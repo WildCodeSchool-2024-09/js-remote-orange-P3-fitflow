@@ -12,11 +12,69 @@ interface DeleteParticipantDialogProps {
     selectedClientIds: number[];
     onDataChange: () => void;
     table: any;
+    coursData: any;
+    refreshCoursData: () => Promise<void>;
 }
 
-function DeleteParticipantDialog({ open, onOpenChange, selectedClientIds, onDataChange, table }: DeleteParticipantDialogProps) {
+function DeleteParticipantDialog({ open, onOpenChange, selectedClientIds, onDataChange, table, coursData, refreshCoursData }: DeleteParticipantDialogProps) {
     const isMobile = useIsMobile();
     const { id } = useParams();
+
+    const updateCoursStatus = async () => {
+        try {
+            const coursResponse = await fetch(`http://localhost:3310/app/cours/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!coursResponse.ok) {
+                throw new Error("Erreur lors de la récupération des données du cours");
+            }
+
+            const coursData = await coursResponse.json();
+
+            const date = new Date(coursData.start_date);
+            const formattedDate = date.toISOString().split('T')[0];
+
+            const updateData = {
+                coach_id: Number(coursData.coach_id),
+                current_status: "published",
+                title: coursData.title,
+                description_notes: coursData.description_notes,
+                price: Number(coursData.price),
+                is_free: Boolean(coursData.is_free),
+                start_date: formattedDate,
+                start_time: coursData.start_time,
+                end_time: coursData.end_time,
+                location_link: coursData.location_link,
+                max_participants: Number(coursData.max_participants)
+            };
+
+            const response = await fetch(`http://localhost:3310/app/cours/${id}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updateData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(JSON.stringify(errorData));
+            }
+
+            if (response.status === 204) {
+                // Rafraîchir les données du cours parent
+                await refreshCoursData();
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                description: "Une erreur est survenue lors de la mise à jour du statut du cours.",
+            });
+        }
+    }
 
 
     const handleDeleteParticipant = async () => {
@@ -35,9 +93,17 @@ function DeleteParticipantDialog({ open, onOpenChange, selectedClientIds, onData
             });
 
             if (response.status === 204) {
+                const currentParticipantsCount = table?.getRowModel().rows.length || 0;
+
+                if (currentParticipantsCount === coursData.max_participants) {
+                    await updateCoursStatus();
+                }
+
                 table.toggleAllRowsSelected(false);
+                await refreshCoursData();
                 onDataChange();
                 onOpenChange(false);
+
                 toast({
                     description: (
                         <div className="flex items-start gap-1">
@@ -59,6 +125,7 @@ function DeleteParticipantDialog({ open, onOpenChange, selectedClientIds, onData
                 });
             }
         } catch (error) {
+            console.error("Erreur lors de la suppression du participant :", error);
             onOpenChange(false);
             toast({
                 variant: "destructive",
@@ -82,6 +149,7 @@ function DeleteParticipantDialog({ open, onOpenChange, selectedClientIds, onData
                 })
             })
             if (response.status === 204) {
+
                 table.toggleAllRowsSelected(false);
                 onDataChange();
                 onOpenChange(false);

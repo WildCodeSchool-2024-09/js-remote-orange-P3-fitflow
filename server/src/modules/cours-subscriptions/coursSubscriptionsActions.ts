@@ -10,6 +10,16 @@ const browseCourses: RequestHandler = async (req, res, next) => {
     }
 }
 
+const readCours: RequestHandler = async (req, res, next) => {
+    try {
+        const clientId = req.body.client_id;
+        const cours = await coursSubscriptionsRepository.readAllCourses(Number(clientId));
+        res.json(cours);
+    } catch (err) {
+        next(err);
+    }
+}
+
 const addParticipant: RequestHandler = async (req, res, next) => {
     try {
         const coursParticipants = await coursSubscriptionsRepository.addParticipant(Number(req.params.id), Number(req.body.client_id));
@@ -21,5 +31,6 @@ const addParticipant: RequestHandler = async (req, res, next) => {
 
 export default {
     browseCourses,
-    addParticipant
+    addParticipant,
+    readCours
 }
