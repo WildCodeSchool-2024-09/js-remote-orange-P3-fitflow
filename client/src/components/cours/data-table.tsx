@@ -16,7 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { CircleCheck, PlusIcon, Search } from "lucide-react";
+import { CircleCheck, PlusIcon, Search, TriangleAlert } from "lucide-react";
 import { Button } from "../ui/button";
 import { CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { useClientsContext } from "@/context/ClientsContext";
@@ -24,16 +24,39 @@ import { useParams } from "react-router-dom";
 import { Input } from "../ui/input";
 import DeleteParticipantDialog from "./DeleteParticipantDialog";
 import { toast } from "@/hooks/use-toast";
-interface DataTableProps<TData extends { id: number }, TValue> {
+
+type Cours = {
+    id: number;
+    coach_id: number;
+    title: string;
+    current_status: string;
+    description_notes: string;
+    price: number;
+    is_free: boolean;
+    start_date: string;
+    start_time: string;
+    end_time: string;
+    location_link: string;
+    max_participants: number;
+    participants: any[];
+}
+
+interface DataTableProps<TData extends { id: number; max_participants: number }, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     onDataChange: () => void
+    maxParticipants: number
+    cours: Cours
+    refreshCoursData: () => Promise<void>
 }
 
-export function DataTable<TData extends { id: number }, TValue>({
+export function DataTable<TData extends { id: number; max_participants: number }, TValue>({
     columns,
     data,
     onDataChange,
+    maxParticipants,
+    cours,
+    refreshCoursData,
 }: DataTableProps<TData, TValue>) {
     const [globalFilter, setGlobalFilter] = useState("");
     const [openCommand, setOpenCommand] = useState(false);
@@ -72,6 +95,62 @@ export function DataTable<TData extends { id: number }, TValue>({
 
     const selectedClientIds = table.getFilteredSelectedRowModel().rows.map(row => (row.original as any).client_id);
 
+    const updateCoursStatus = async () => {
+        try {
+            const coursResponse = await fetch(`http://localhost:3310/app/cours/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!coursResponse.ok) {
+                throw new Error("Erreur lors de la récupération des données du cours");
+            }
+
+            const coursData = await coursResponse.json();
+
+            const date = new Date(coursData.start_date);
+            const formattedDate = date.toISOString().split('T')[0];
+
+            const updateData = {
+                coach_id: Number(coursData.coach_id),
+                current_status: "full",
+                title: coursData.title,
+                description_notes: coursData.description_notes,
+                price: Number(coursData.price),
+                is_free: Boolean(coursData.is_free),
+                start_date: formattedDate,
+                start_time: coursData.start_time,
+                end_time: coursData.end_time,
+                location_link: coursData.location_link,
+                max_participants: Number(coursData.max_participants)
+            };
+
+            const response = await fetch(`http://localhost:3310/app/cours/${id}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updateData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(JSON.stringify(errorData));
+            }
+
+            if (response.status === 204) {
+                // Rafraîchir les données du cours parent
+                await refreshCoursData();
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                description: "Une erreur est survenue lors de la mise à jour du statut du cours.",
+            });
+        }
+    }
+
     const addParticipant = async (clientId: number) => {
         try {
             const response = await fetch(`http://localhost:3310/app/cours/${id}`, {
@@ -82,9 +161,26 @@ export function DataTable<TData extends { id: number }, TValue>({
                 },
                 body: JSON.stringify({ client_id: clientId }),
             });
+
             if (response.status === 201) {
+                // Vérifier si le cours est maintenant complet
+                if (data.length + 1 >= cours.max_participants) {
+                    await updateCoursStatus();
+                }
+                // Forcer un rafraîchissement immédiat des données
                 onDataChange();
+                // Recharger les données du cours spécifique
+                const coursResponse = await fetch(`http://localhost:3310/app/cours/${id}`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (coursResponse.ok) {
+                    onDataChange();
+                }
+
                 setOpenCommand(false);
+
                 toast({
                     description: (
                         <div className="flex items-start gap-1">
@@ -99,12 +195,21 @@ export function DataTable<TData extends { id: number }, TValue>({
                 });
             }
         } catch (error) {
-            console.error("Erreur lors de l'ajout du participant :", error);
+            toast({
+                variant: "destructive",
+                description: "Une erreur est survenue lors de l'ajout du participant.",
+            });
         }
     }
 
     return (
         <div className="flex flex-col w-full gap-6">
+            {cours?.max_participants <= data.length && (
+                <div className="flex items-center justify-start w-full h-fit gap-2 py-2 px-3 bg-[#fff4cf] rounded-md">
+                    <TriangleAlert className="w-4 h-4 text-[#aa4d00]" />
+                    <p className="text-sm text-[#aa4d00]">Votre cours est complet.</p>
+                </div>
+            )}
             <div className="flex flex-col items-start justify-between w-full h-fit gap-4">
                 <div className="flex flex-col items-start justify-between w-full h-fit gap-2 xl:flex-row">
                     <div className="relative w-full xl:max-w-sm">
@@ -118,16 +223,20 @@ export function DataTable<TData extends { id: number }, TValue>({
                         />
                     </div>
                     <div className="flex flex-col xl:flex-row items-end justify-end w-full xl:w-fit h-fit gap-2">
-                        <Button className="w-full xl:w-fit" onClick={() => setOpenCommand(true)}>
-                            <PlusIcon className="w-4 h-4" />
-                            Ajouter un participant
-                        </Button>
+                        {data.length < maxParticipants && (
+                            <Button className="w-full xl:w-fit" onClick={() => setOpenCommand(true)}>
+                                <PlusIcon className="w-4 h-4" />
+                                Ajouter un participant
+                            </Button>
+                        )}
                         {selectedClientIds.length > 0 && <DeleteParticipantDialog
                             open={openDeleteParticipant}
                             onOpenChange={setOpenDeleteParticipant}
                             selectedClientIds={selectedClientIds}
                             onDataChange={onDataChange}
                             table={table}
+                            coursData={cours}
+                            refreshCoursData={refreshCoursData}
                         />}
                     </div>
                 </div>

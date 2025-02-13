@@ -18,6 +18,7 @@ type Cours = {
     end_time: string;
     location_link: string;
     max_participants: number;
+    participants_count: number;
 }
 
 type StatusColors = {
@@ -61,7 +62,7 @@ function CoursItem({ cours }: { cours: Cours }) {
                 </Badge>
                 <div className="flex flex-row items-center justify-center gap-2">
                     <ContactIcon className="w-4 h-4 text-gray-500" />
-                    <p className="text-xs text-gray-500">0/{cours.max_participants}</p>
+                    <p className="text-xs text-gray-500">{cours?.participants_count || 0}/{cours.max_participants}</p>
                 </div>
 
             </header>

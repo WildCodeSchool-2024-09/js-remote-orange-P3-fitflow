@@ -22,9 +22,11 @@ type Client = {
     weight_kg: number;
     height_cm: number;
     notes: string;
+    cours: any;
+    coursParticipants: any;
 }
 
-function ClientsDetailsWrapper({ client }: { client: Client }) {
+function ClientsDetailsWrapper({ client, }: { client: Client }) {
     const [tab, setTab] = useState<string>("course");
     const [openDetails, setOpenDetails] = useState<boolean>(false);
     const [isTablet, setIsTablet] = useState(window.innerWidth < 992);
@@ -112,8 +114,8 @@ function ClientsDetailsWrapper({ client }: { client: Client }) {
                             </TabsList>
                         </Tabs>
                     </header>
-                    {tab === "course" && <ClientCourseSubscription client={clientData} openDetails={openDetails} />}
-                    {tab === "workouts" && <ClientsWorkouts client={clientData} openDetails={openDetails} />}
+                    {tab === "course" && <ClientCourseSubscription client={clientData} participants={clientData.coursParticipants} />}
+                    {tab === "workouts" && <ClientsWorkouts client={clientData} />}
                 </div>
                 <AsideClientDetails client={clientData} openDetails={openDetails} isTablet={isTablet} />
             </div>

@@ -67,11 +67,12 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
 
         const formattedStartDate = startDate ? startDate.split('T')[0] : '';
         const formattedPrice = isFree ? 0 : (price === '' ? 0 : Number(price));
+        const whenFull = Number(maxParticipants) > (cours?.max_participants || 0) && currentStatus === "full" ? "published" : currentStatus;
 
         const coursData = {
             coach_id: planSubscription?.coach_id || "",
             title: title,
-            current_status: currentStatus,
+            current_status: whenFull,
             description_notes: descriptionNotes,
             price: formattedPrice,
             is_free: Boolean(isFree),
@@ -96,9 +97,9 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
                 body: JSON.stringify(coursData),
             });
 
-            if (response.status === 204) {
-                onClose();
+            if (response.status === 204 || response.status === 201) {
                 await fetchCours();
+                onClose();
                 toast({
                     description: (
                         <div className="flex items-start gap-1">
@@ -117,24 +118,6 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
             const data = await response.json();
             if (response.status === 400) {
                 setServerErrors(data.errors);
-                return;
-            }
-
-            if (response.status === 201) {
-                onClose();
-                await fetchCours();
-                toast({
-                    description: (
-                        <div className="flex items-start gap-1">
-                            <CircleCheck fill="#019939" color="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} className="w-5 h-5" />
-                            <div className="flex flex-col items-start gap-1 pl-2">
-                                <p className="text-[#016626] font-medium text-sm">Cours {mode === "add" ? "ajouté" : "modifié"}</p>
-                                <p className="text-[#016626] font-medium text-xs">Le cours a été {mode === "add" ? "ajouté" : "modifié"} avec succès.</p>
-                            </div>
-                        </div>
-                    ),
-                    className: "bg-[#EBFBF1] text-[#016626] font-light border border-[#C1F4D4]"
-                });
                 return;
             }
         } catch (error) {
@@ -184,9 +167,7 @@ function CoursForm({ onClose, cours, mode }: CoursFormProps) {
                         <SelectContent>
                             <SelectItem className="cursor-pointer" value="draft">Brouillon</SelectItem>
                             <SelectItem className="cursor-pointer" value="published">Publié</SelectItem>
-                            <SelectItem className="cursor-pointer" value="full">Complet</SelectItem>
-                            <SelectItem className="cursor-pointer" value="finished">Terminé</SelectItem>
-                            <SelectItem className="cursor-pointer" value="cancelled">Annulé</SelectItem>
+                            {mode === "edit" && <SelectItem className="cursor-pointer" value="finished">Terminé</SelectItem>}
                         </SelectContent>
                     </Select>
                     {serverErrors.some(error => error.field === "current_status") && (

@@ -2,6 +2,7 @@ import clientsRepository from "./clientsRepository";
 import type { RequestHandler } from "express";
 import coachRepository from "../coach/coachRepository";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import coursSubscriptionsRepository from "../cours-subscriptions/coursSubscriptionsRepository";
 
 type User = {
     user: any;
@@ -109,11 +110,24 @@ const read: RequestHandler = async (req, res, next) => {
     try {
         const clientId = Number(req.params.id);
         const client = await clientsRepository.read(clientId);
+        const cours = await coursSubscriptionsRepository.readAllCourses(clientId);
+        
+        // Récupérer le nombre de participants pour chaque cours
+        const coursWithParticipantsCount = await Promise.all(cours.map(async (course) => {
+            const participants = await coursSubscriptionsRepository.readAllClients(course.id);
+            return {
+                ...course,
+                participants_count: participants.length // Ajout du nombre de participants
+            };
+        }));
 
         if (client === null) {
             res.sendStatus(404);
         } else {
-            res.json(client);
+            res.json({
+                ...client,
+                cours: coursWithParticipantsCount // Utiliser le tableau avec le nombre de participants
+            });
         }
     } catch (err) {
         next(err);
