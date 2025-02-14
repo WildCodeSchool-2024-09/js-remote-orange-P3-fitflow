@@ -69,7 +69,7 @@ class CoursRepository {
         return result;
     }
 
-    async update(cours: Partial<Cours>) {
+    async update(cours: Cours) {
         const [result] = await databaseClient.query<Result>(
             `UPDATE courses 
             SET 

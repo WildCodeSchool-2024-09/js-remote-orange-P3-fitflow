@@ -5,15 +5,18 @@ import { useEffect } from "react";
 import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "../components/ui/separator";
+import { WorkoutsProvider, useWorkoutsContext } from "@/context/WorkoutsContext";
 
 function WorkoutsContent() {
     const { fetchCoach } = useUser();
     const { fetchPlans } = usePlanContext();
+    const { fetchWorkouts } = useWorkoutsContext();
 
     useEffect(() => {
         fetchCoach();
         fetchPlans();
-    }, [fetchCoach, fetchPlans]);
+        fetchWorkouts();
+    }, [fetchCoach, fetchPlans, fetchWorkouts]);
     return (
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
@@ -36,7 +39,9 @@ export default function Workouts() {
     return (
         <UserProvider>
             <PlanProvider>
-                <WorkoutsContent />
+                <WorkoutsProvider>
+                    <WorkoutsContent />
+                </WorkoutsProvider>
             </PlanProvider>
         </UserProvider>
     );
