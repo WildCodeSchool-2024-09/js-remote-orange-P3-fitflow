@@ -127,4 +127,12 @@ router.delete("/app/cours/:id",
     coursActions.destroy
 );
 
+/* ************************************************************************* */
+// Define workouts routes
+import workoutsActions from "./modules/workouts/workoutsActions";
+router.get("/app/workouts",
+    cookieJwtAuth.cookieJwtAuth,
+    workoutsActions.browse
+);
+
 export default router;
