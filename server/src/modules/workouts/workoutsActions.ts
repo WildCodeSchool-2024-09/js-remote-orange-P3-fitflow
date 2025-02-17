@@ -8,6 +8,40 @@ type User = {
     user_role: string;
 }
 
+const validateWorkoutData: RequestHandler = async (req, res, next) => {
+    type ValidatorError = {
+        field: string;
+        message: string;
+    }
+    const errors: ValidatorError[] = [];
+
+    const { title, workout_description, duration_minutes, level_of_difficulty } = req.body;
+
+    if (typeof title !== "string" || title.length < 2 || title.length > 255) {
+        errors.push({ field: "title", message: "Le titre du workout doit être une chaîne de caractères contenant au moins 2 caractères et maximum 255 caractères" });
+    }
+
+    if (typeof workout_description !== "string" || workout_description.length < 1) {
+        errors.push({ field: "workout_description", message: "Veuillez entrer une description du workout" });
+    }
+
+    if (typeof duration_minutes !== "number") {
+        errors.push({ field: "duration_minutes", message: "La durée du workout doit être un nombre" });
+    } else if (duration_minutes < 0) {
+        errors.push({ field: "duration_minutes", message: "La durée du workout ne peut pas être négative" });
+    }
+
+    if (typeof level_of_difficulty !== "string" || !["beginner", "intermediate", "advanced"].includes(level_of_difficulty)) {
+        errors.push({ field: "level_of_difficulty", message: "Le niveau de difficulté du workout n'est pas valide" });
+    }
+
+    if (errors.length > 0) {
+        res.status(400).json({ errors });
+    } else {
+        next();
+    }
+}
+
 const browse: RequestHandler = async (req, res, next) => {
    try {
     const userData: User = req.user as unknown as User;
@@ -35,10 +69,10 @@ const read: RequestHandler = async (req, res, next) => {
 const add: RequestHandler = async (req, res, next) => {
     try {
         const newWorkout = {
-            coach_id: req.body.coach_id,
+            coach_id: Number(req.body.coach_id),
             title: req.body.title,
             workout_description: req.body.workout_description,
-            duration_minutes: req.body.duration_minutes,
+            duration_minutes: Number(req.body.duration_minutes),
             level_of_difficulty: req.body.level_of_difficulty,
         }
         const insertId = await workoutsRepository.create(newWorkout);
@@ -76,4 +110,4 @@ const destroy: RequestHandler = async (req, res, next) => {
     }
 }
 
-export default { browse, read, add, edit, destroy };
+export default { browse, read, add, edit, destroy, validateWorkoutData };

@@ -6,17 +6,20 @@ import { UserProvider, useUser } from "@/context/UserContext";
 import { PlanProvider, usePlanContext } from "@/context/PlanContext";
 import { Separator } from "../components/ui/separator";
 import { WorkoutsProvider, useWorkoutsContext } from "@/context/WorkoutsContext";
-
+import { ClientsProvider, useClientsContext } from "@/context/ClientsContext";
+import WorkoutsWrapper from "@/components/workouts/WorkoutsWrapper";
 function WorkoutsContent() {
     const { fetchCoach } = useUser();
     const { fetchPlans } = usePlanContext();
     const { fetchWorkouts } = useWorkoutsContext();
+    const { fetchClients } = useClientsContext();
 
     useEffect(() => {
         fetchCoach();
         fetchPlans();
         fetchWorkouts();
-    }, [fetchCoach, fetchPlans, fetchWorkouts]);
+        fetchClients();
+    }, [fetchCoach, fetchPlans, fetchWorkouts, fetchClients]);
     return (
         <main className="flex flex-col items-center justify-center h-screen">
             <SidebarProvider>
@@ -29,6 +32,7 @@ function WorkoutsContent() {
                             <h1 className="text-sm font-medium">Workouts</h1>
                         </div>
                     </header>
+                    <WorkoutsWrapper />
                 </SidebarInset>
             </SidebarProvider>
         </main>
@@ -39,9 +43,11 @@ export default function Workouts() {
     return (
         <UserProvider>
             <PlanProvider>
-                <WorkoutsProvider>
-                    <WorkoutsContent />
-                </WorkoutsProvider>
+                <ClientsProvider>
+                    <WorkoutsProvider>
+                        <WorkoutsContent />
+                    </WorkoutsProvider>
+                </ClientsProvider>
             </PlanProvider>
         </UserProvider>
     );
