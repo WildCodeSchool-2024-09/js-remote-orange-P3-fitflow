@@ -135,4 +135,10 @@ router.get("/app/workouts",
     workoutsActions.browse
 );
 
+router.post("/app/workouts",
+    cookieJwtAuth.cookieJwtAuth,
+    workoutsActions.validateWorkoutData,
+    workoutsActions.add
+);
+
 export default router;
