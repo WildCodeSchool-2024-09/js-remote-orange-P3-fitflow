@@ -94,7 +94,7 @@ const edit: RequestHandler = async (req, res, next) => {
             level_of_difficulty: req.body.level_of_difficulty,
         }
         const result = await workoutsRepository.update(workoutData);
-        res.json(result);
+        res.status(204).json(result);
     } catch (err) {
         next(err);
     }
@@ -104,7 +104,7 @@ const destroy: RequestHandler = async (req, res, next) => {
     try {
         const workoutId = Number(req.params.id);
         const result = await workoutsRepository.delete(workoutId);
-        res.json(result);
+        res.status(204).json(result);
     } catch (err) {
         next(err);
     }

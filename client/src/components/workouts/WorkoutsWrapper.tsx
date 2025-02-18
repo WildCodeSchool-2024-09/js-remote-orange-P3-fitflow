@@ -12,7 +12,7 @@ function WorkoutsWrapper() {
     const [search, setSearch] = useState("");
     const [open, setOpen] = useState(false);
     const [level, setLevel] = useState("all");
-    const { workouts } = useWorkoutsContext();
+    const { workouts, fetchWorkouts } = useWorkoutsContext();
 
     return (
         <div className="flex flex-col items-start justify-start w-full h-screen bg-white">
@@ -47,6 +47,7 @@ function WorkoutsWrapper() {
                 <AddWorkoutDialog
                     open={open}
                     onOpenChange={setOpen}
+                    onWorkoutUpdate={fetchWorkouts}
                 />
             </header>
             <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start justify-start w-full h-fit bg-white p-6">

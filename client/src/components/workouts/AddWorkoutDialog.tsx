@@ -9,9 +9,10 @@ import WorkoutsForm from "@/components/forms/WorkoutsForm";
 interface AddWorkoutDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onWorkoutUpdate: () => void;
 }
 
-function AddWorkoutDialog({ open, onOpenChange }: AddWorkoutDialogProps) {
+function AddWorkoutDialog({ open, onOpenChange, onWorkoutUpdate }: AddWorkoutDialogProps) {
     const isMobile = useIsMobile();
 
     return (
@@ -34,7 +35,7 @@ function AddWorkoutDialog({ open, onOpenChange }: AddWorkoutDialogProps) {
                         </DialogDescription>
                     </DialogHeader>
                     <ScrollArea className="overflow-auto">
-                        <WorkoutsForm onClose={() => onOpenChange(false)} mode="add" />
+                        <WorkoutsForm onClose={() => onOpenChange(false)} mode="add" onWorkoutUpdate={onWorkoutUpdate} />
                     </ScrollArea>
                 </DialogContent>
             </Dialog>
@@ -57,7 +58,7 @@ function AddWorkoutDialog({ open, onOpenChange }: AddWorkoutDialogProps) {
                                 Ajouter un workout à votre liste de workouts
                             </DrawerDescription>
                         </DrawerHeader>
-                        <WorkoutsForm onClose={() => onOpenChange(false)} mode="add" />
+                        <WorkoutsForm onClose={() => onOpenChange(false)} mode="add" onWorkoutUpdate={onWorkoutUpdate} />
                     </ScrollArea>
                 </DrawerContent>
             </Drawer>
