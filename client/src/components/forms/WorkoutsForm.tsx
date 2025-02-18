@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useWorkoutsContext } from "@/context/WorkoutsContext";
 import { useToast } from "@/hooks/use-toast";
 import { CircleCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useParams } from "react-router-dom";
 
 type ServerError = {
     message: string;
@@ -26,9 +27,10 @@ interface WorkoutsFormProps {
         level_of_difficulty: string;
     }
     mode: "add" | "edit";
+    onWorkoutUpdate: () => void;
 }
 
-function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
+function WorkoutsForm({ onClose, workout, mode, onWorkoutUpdate }: WorkoutsFormProps) {
 
     const [serverErrors, setServerErrors] = useState<ServerError[]>([]);
     const [title, setTitle] = useState<string>(workout?.title || "");
@@ -37,8 +39,8 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
     const [levelOfDifficulty, setLevelOfDifficulty] = useState<string>(workout?.level_of_difficulty || "");
     const { planSubscription } = usePlanContext();
     const isMobile = useIsMobile();
-    const { fetchWorkouts } = useWorkoutsContext();
     const { toast } = useToast();
+    const { id } = useParams();
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -52,7 +54,7 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
             level_of_difficulty: levelOfDifficulty,
         };
 
-        const url = mode === "add" ? `${import.meta.env.VITE_API_URL}/app/workouts` : `${import.meta.env.VITE_API_URL}/app/workouts/${workout?.id}`;
+        const url = mode === "add" ? `${import.meta.env.VITE_API_URL}/app/workouts` : `${import.meta.env.VITE_API_URL}/app/workouts/${id}`;
         const method = mode === "add" ? "POST" : "PUT";
 
         try {
@@ -67,7 +69,7 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
             });
 
             if (response.status === 204 || response.status === 201) {
-                await fetchWorkouts();
+                onWorkoutUpdate();
                 onClose();
                 toast({
                     description: (
@@ -103,18 +105,25 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
             onSubmit={onSubmit}
         >
             <div className="flex flex-col items-start justify-start gap-2 w-full">
-                <Label htmlFor="title">Titre</Label>
+                <Label htmlFor="title" className={`${serverErrors.some(error => error.field === "title") ? "text-red-500" : ""}`}>Titre</Label>
                 <Input
                     id="title"
                     type="text"
                     placeholder="Titre"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
+                    className={cn(
+                        serverErrors.some(error => error.field === "title") &&
+                        "border-red-500 focus:border-red-500 focus-visible:ring-red-500"
+                    )}
                 />
+                {serverErrors.some(error => error.field === "title") && (
+                    <p className="text-red-500 text-xs">{serverErrors.find(error => error.field === "title")?.message}</p>
+                )}
             </div>
             <div className="flex flex-col md:flex-row items-start justify-start gap-6 md:gap-2 w-full">
                 <div className="flex flex-col items-start justify-start gap-2 w-full">
-                    <Label htmlFor="level_of_difficulty">Niveau de difficulté</Label>
+                    <Label htmlFor="level_of_difficulty" className={`${serverErrors.some(error => error.field === "level_of_difficulty") ? "text-red-500" : ""}`}>Niveau de difficulté</Label>
                     <Select
                         value={levelOfDifficulty}
                         onValueChange={(value) => setLevelOfDifficulty(value)}
@@ -128,13 +137,20 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
                             <SelectItem value="advanced">Avancé</SelectItem>
                         </SelectContent>
                     </Select>
+                    {serverErrors.some(error => error.field === "level_of_difficulty") && (
+                        <p className="text-red-500 text-xs">{serverErrors.find(error => error.field === "level_of_difficulty")?.message}</p>
+                    )}
                 </div>
                 <div className="flex flex-col items-start justify-start gap-2 w-full">
-                    <Label htmlFor="duration_minutes">Durée</Label>
+                    <Label htmlFor="duration_minutes" className={`${serverErrors.some(error => error.field === "duration_minutes") ? "text-red-500" : ""}`}>Durée</Label>
                     <div className="flex rounded-lg shadow-sm shadow-black/5 w-full">
                         <Input
                             id="duration_minutes"
-                            className="-me-px rounded-e-none shadow-none"
+                            className={cn(
+                                "-me-px rounded-e-none shadow-none",
+                                serverErrors.some(error => error.field === "duration_minutes") &&
+                                "border-red-500 focus:border-red-500 focus-visible:ring-red-500"
+                            )}
                             type="number"
                             placeholder="Durée"
                             value={durationMinutes}
@@ -145,17 +161,27 @@ function WorkoutsForm({ onClose, workout, mode }: WorkoutsFormProps) {
                             minutes
                         </span>
                     </div>
+                    {serverErrors.some(error => error.field === "duration_minutes") && (
+                        <p className="text-red-500 text-xs">{serverErrors.find(error => error.field === "duration_minutes")?.message}</p>
+                    )}
                 </div>
             </div>
             <div className="flex flex-col items-start justify-start gap-2 w-full">
-                <Label htmlFor="workout_description">Notes</Label>
+                <Label htmlFor="workout_description" className={`${serverErrors.some(error => error.field === "workout_description") ? "text-red-500" : ""}`}>Notes</Label>
                 <Textarea
-                    className="min-h-[200px]"
+                    className={cn(
+                        "min-h-[200px]",
+                        serverErrors.some(error => error.field === "workout_description") &&
+                        "border-red-500 focus:border-red-500 focus-visible:ring-red-500"
+                    )}
                     id="workout_description"
                     placeholder="Notes"
                     value={workoutDescription}
                     onChange={(e) => setWorkoutDescription(e.target.value)}
                 />
+                {serverErrors.some(error => error.field === "workout_description") && (
+                    <p className="text-red-500 text-xs">{serverErrors.find(error => error.field === "workout_description")?.message}</p>
+                )}
             </div>
             <div className="flex items-center justify-end gap-2 w-full">
                 <Button variant="outline" onClick={onClose}>

@@ -15,7 +15,7 @@ import Plans from "./pages/Plans";
 import Profil from "./pages/Profil";
 import ClientDetails from "./pages/ClientDetails";
 import CoursDetails from "./pages/CoursDetails";
-
+import WorkoutsDetails from "./pages/WorkoutsDetails";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: "/app/workouts",
     element: <Workouts />
+  },
+  {
+    path: "/app/workouts/:id",
+    element: <WorkoutsDetails />
   },
   {
     path: "/app/exercices",

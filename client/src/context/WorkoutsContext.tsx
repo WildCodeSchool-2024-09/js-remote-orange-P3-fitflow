@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
-
 type Workout = {
     id: number;
     coach_id: number;
@@ -19,6 +18,7 @@ type WorkoutsContextType = {
 export const WorkoutsContext = createContext<WorkoutsContextType | undefined>(undefined);
 
 export function WorkoutsProvider({ children }: { children: ReactNode }) {
+
     const [workouts, setWorkouts] = useState<Workout[]>([]);
 
     const fetchWorkouts = useCallback(async () => {
@@ -39,6 +39,8 @@ export function WorkoutsProvider({ children }: { children: ReactNode }) {
             // TODO: handle error
         }
     }, []);
+
+
 
     return (
         <WorkoutsContext.Provider value={{

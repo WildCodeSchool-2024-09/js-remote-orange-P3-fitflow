@@ -28,7 +28,7 @@ function WorkoutsItem({ workout }: { workout: Workout }) {
     const navigate = useNavigate();
 
     return (
-        <Card className="cursor-pointer" onClick={() => navigate(`/workouts/${workout.id}`)}>
+        <Card className="cursor-pointer" onClick={() => navigate(`/app/workouts/${workout.id}`)}>
             <CardHeader className="flex flex-col items-start justify-start gap-1 p-4">
                 <div className="flex items-center justify-center w-full h-[150px] gap-2 bg-[url('/div.react-flow.svg')] bg-cover bg-center rounded-lg border border-[#EEEFF1]">
                     <div className="flex items-center justify-center w-[50px] h-[50px] bg-[#E5EEFF] border border-[#D6E5FF] rounded-md">

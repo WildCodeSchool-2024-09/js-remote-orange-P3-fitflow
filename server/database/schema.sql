@@ -116,15 +116,21 @@ CREATE TABLE workouts (
 CREATE TABLE exercises (
   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
   coach_id INT UNSIGNED NOT NULL,
+  workout_id INT UNSIGNED NOT NULL,
   exercise_name VARCHAR(255) NOT NULL,
   notes TEXT NOT NULL,
   level_of_difficulty ENUM('beginner', 'intermediate', 'advanced') NOT NULL DEFAULT 'beginner',
   primary_muscle_group VARCHAR(255) NOT NULL,
   secondary_muscle_group VARCHAR(255) NOT NULL,
   media_url VARCHAR(255) NOT NULL,
+  sets_count INT NOT NULL DEFAULT 1,
+  reps_count INT NOT NULL DEFAULT 1,
+  weight_kg INT NOT NULL DEFAULT 0,
+  rest_time_seconds INT NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (coach_id) REFERENCES coaches(id) ON DELETE CASCADE
+  FOREIGN KEY (coach_id) REFERENCES coaches(id) ON DELETE CASCADE,
+  FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
 );
 
 CREATE TABLE workout_exercises (

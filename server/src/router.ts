@@ -134,11 +134,23 @@ router.get("/app/workouts",
     cookieJwtAuth.cookieJwtAuth,
     workoutsActions.browse
 );
-
+router.get("/app/workouts/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    workoutsActions.read
+);
 router.post("/app/workouts",
     cookieJwtAuth.cookieJwtAuth,
     workoutsActions.validateWorkoutData,
     workoutsActions.add
+);
+router.put("/app/workouts/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    workoutsActions.validateWorkoutData,
+    workoutsActions.edit
+);
+router.delete("/app/workouts/:id",
+    cookieJwtAuth.cookieJwtAuth,
+    workoutsActions.destroy
 );
 
 export default router;
