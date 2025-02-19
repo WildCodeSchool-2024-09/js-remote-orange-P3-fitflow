@@ -1,68 +1,84 @@
-// Import necessary modules from React and React Router
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-/* ************************************************************************* */
-
-// Import the main app component
+import "./index.css";
 import App from "./App";
-
-// Import additional components for new routes
-// Try creating these components in the "pages" folder
-
-// import About from "./pages/About";
-// import Contact from "./pages/Contact";
-
-/* ************************************************************************* */
-
-// Create router configuration with routes
-// You can add more routes as you build out your app!
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Clients from "./pages/Clients";
+import Cours from "./pages/Cours";
+import Workouts from "./pages/Workouts";
+import Exercices from "./pages/Exercices";
+import Plans from "./pages/Plans";
+import Profil from "./pages/Profil";
+import ClientDetails from "./pages/ClientDetails";
+import CoursDetails from "./pages/CoursDetails";
+import WorkoutsDetails from "./pages/WorkoutsDetails";
 const router = createBrowserRouter([
   {
-    path: "/", // The root path
-    element: <App />, // Renders the App component for the home page
+    path: "/",
+    element: <App />,
   },
-  // Try adding a new route! For example, "/about" with an About component
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/login",
+    element: <Login />
+  },
+  {
+    path: "/app/dashboard",
+    element: <Dashboard />
+  },
+  {
+    path: "/app/clients",
+    element: <Clients />
+  },
+  {
+    path: "/app/clients/:id",
+    element: <ClientDetails />
+  },
+  {
+    path: "/app/cours",
+    element: <Cours />
+  },
+  {
+    path: "/app/cours/:id",
+    element: <CoursDetails />
+  },
+  {
+    path: "/app/workouts",
+    element: <Workouts />
+  },
+  {
+    path: "/app/workouts/:id",
+    element: <WorkoutsDetails />
+  },
+  {
+    path: "/app/exercices",
+    element: <Exercices />
+  },
+  {
+    path: "/app/plans",
+    element: <Plans />
+  },
+  {
+    path: "/app/profil",
+    element: <Profil />
+  }
 ]);
 
-/* ************************************************************************* */
-
-// Find the root element in the HTML document
 const rootElement = document.getElementById("root");
 if (rootElement == null) {
   throw new Error(`Your HTML Document should contain a <div id="root"></div>`);
 }
 
-// Render the app inside the root element
 createRoot(rootElement).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>
 );
-
-/**
- * Helpful Notes:
- * 
- * 1. Adding More Routes:
- *    To add more pages to your app, first create a new component (e.g., About.tsx).
- *    Then, import that component above like this:
- * 
- *    import About from "./pages/About";
- * 
- *    Add a new route to the router:
- * 
- *      {
- *        path: "/about",
- *        element: <About />,  // Renders the About component
- *      }
- * 
- * 2. Try Nested Routes:
- *    For more complex applications, you can nest routes. This lets you have sub-pages within a main page.
- *    Documentation: https://reactrouter.com/en/main/start/tutorial#nested-routes
- * 
- * 3. Experiment with Dynamic Routes:
- *    You can create routes that take parameters (e.g., /users/:id).
- *    Documentation: https://reactrouter.com/en/main/start/tutorial#url-params-in-loaders
- */
 
